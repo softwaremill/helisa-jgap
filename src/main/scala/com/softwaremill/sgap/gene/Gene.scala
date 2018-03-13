@@ -52,3 +52,13 @@ object BooleanGene {
     apply(new j.impl.BooleanGene(configuration.jConfig, startValue))
 
 }
+
+object Gene {
+
+  def fromJ(jGene: j.Gene): Gene[_, _] = jGene match {
+    case g: j.impl.BooleanGene        => BooleanGene(g)
+    case g: j.impl.IntegerGene        => IntGene(g)
+    case g: j.impl.MutipleIntegerGene => MultipleIntGene(g)
+  }
+
+}

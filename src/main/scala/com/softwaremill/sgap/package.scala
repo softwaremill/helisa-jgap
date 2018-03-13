@@ -3,6 +3,7 @@ package com.softwaremill
 import com.softwaremill.sgap.gene.Gene
 import org.{jgap => j}
 import shapeless.ops.hlist.ToTraversable
+import shapeless.ops.traversable.FromTraversable
 import shapeless.{Generic, HList, Poly1}
 
 package object sgap {
@@ -24,9 +25,9 @@ package object sgap {
   }
 
   implicit def caseClassChromosome[A, Repr <: HList](implicit g: Generic.Aux[A, Repr],
-                                                     tT: ToTraversable.Aux[Repr, Vector, Gene[_, _ <: j.Gene]]): Chromosome[A] = {
-    import shapeless._
-    import shapeless.ops.hlist._
+                                                     tT: ToTraversable.Aux[Repr, Vector, Gene[_, _ <: j.Gene]],
+                                                     fT: FromTraversable[Repr]): Chromosome[A] = {
+    import shapeless.syntax.std.traversable._
 
     new Chromosome[A] {
       def genes(a: A): Vector[Gene[_, _ <: j.Gene]] = {
@@ -34,7 +35,10 @@ package object sgap {
         tT(repr)
       }
 
-      def fromJ(jChromo: j.IChromosome): A = ??? //TODO: add ab nihilo conversion
+      def fromJ(jChromo: j.IChromosome): A = {
+        val repr = jChromo.getGenes.toTraversable.map(Gene.fromJ).toHList[Repr]
+        g.from(repr.get) //TODO
+      }
     }
 
   }
