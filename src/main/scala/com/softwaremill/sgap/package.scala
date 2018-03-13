@@ -21,7 +21,7 @@ package object sgap {
   }
 
   implicit class JChromosomeOps[A](jChromo: j.IChromosome)(implicit chromoA: Chromosome[A]) {
-    def fromJ: A = chromoA.fromJ(jChromo)
+    def fromJ: Either[String, A] = chromoA.fromJ(jChromo)
   }
 
   implicit def caseClassChromosome[A, Repr <: HList](implicit g: Generic.Aux[A, Repr],
@@ -35,9 +35,9 @@ package object sgap {
         tT(repr)
       }
 
-      def fromJ(jChromo: j.IChromosome): A = {
+      def fromJ(jChromo: j.IChromosome): Either[String, A] = {
         val repr = jChromo.getGenes.toTraversable.map(Gene.fromJ).toHList[Repr]
-        g.from(repr.get) //TODO
+        repr.map(g.from).toRight(s"Could not convert following IChromosome to case class: $jChromo")
       }
     }
 

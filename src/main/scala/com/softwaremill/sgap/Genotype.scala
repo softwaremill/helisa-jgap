@@ -11,7 +11,7 @@ class Genotype[A: Chromosome] private (configuration: Configuration[A]) {
     this
   }
 
-  def fittestChromosome: A = jGenotype.getFittestChromosome.fromJ
+  def fittestChromosome: Option[A] = jGenotype.getFittestChromosome.fromJ.toOption
 
   def fitnessValue(chromosome: A): Double = chromosome.toJ(configuration).getFitnessValue
 

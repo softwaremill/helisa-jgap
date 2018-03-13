@@ -6,6 +6,6 @@ import org.{jgap => j}
 trait Chromosome[A] {
   def genes(a: A): Vector[Gene[_, _ <: j.Gene]]
 
-  def fromJ(jChromo: j.IChromosome): A //ErrorEither?
+  def fromJ(jChromo: j.IChromosome): Either[String, A]
 
 }

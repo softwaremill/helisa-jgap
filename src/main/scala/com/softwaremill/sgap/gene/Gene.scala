@@ -59,6 +59,7 @@ object Gene {
     case g: j.impl.BooleanGene        => BooleanGene(g)
     case g: j.impl.IntegerGene        => IntGene(g)
     case g: j.impl.MutipleIntegerGene => MultipleIntGene(g)
+    case u                            => throw new UnsupportedOperationException(s"Unsupported JGAP gene conversion for type: ${u.getClass}")
   }
 
 }
