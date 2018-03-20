@@ -41,8 +41,10 @@ class NaturalSelector[A: Chromosome: Configuration, Col <: Iterable[j.IChromosom
 
   def empty(): Unit = jChromos = Monoid[Col].empty
 
-  def add(a_chromosomeToAdd: IChromosome): Unit =
+  def add(a_chromosomeToAdd: IChromosome): Unit = {
+    a_chromosomeToAdd.setIsSelectedForNextGeneration(false)
     jChromos = accumulator(jChromos)(a_chromosomeToAdd)
+  }
 }
 
 private trait ChromosomeAccumulator[Col <: Iterable[j.IChromosome]] {
