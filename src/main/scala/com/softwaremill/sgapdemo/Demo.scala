@@ -13,7 +13,7 @@ object Demo extends App {
   implicit val config: Configuration[CannyParameters] = Configuration(fitnessFunction)
 
   config.sampleChromosome = CannyParameters(IntGene(0, 255), IntGene(0, 255), MultipleIntGene(0, 12, 2))
-  config.populationSize = 100
+  config.maxPopulationSize = 100
 
   val genotype = Genotype.randomGenotype(config)
 
