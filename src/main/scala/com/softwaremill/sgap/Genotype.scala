@@ -56,6 +56,6 @@ class Genotype[A: Chromosome : Configuration] private (private[sgap] val configu
 
 object Genotype {
 
-  def randomGenotype[A: Chromosome](configuration: Configuration[A]): Genotype[A] = new Genotype[A](configuration)
+  def randomGenotype[A: Chromosome : Configuration](configuration: Configuration[A]): Genotype[A] = new Genotype[A](configuration)
 
 }
