@@ -4,7 +4,7 @@ import org.jgap.IChromosome
 import org.{jgap => j}
 import scala.collection.JavaConverters._
 
-class Genotype[A: Chromosome] private (private[sgap] val configuration: Configuration[A]) {
+class Genotype[A: Chromosome : Configuration] private (private[sgap] val configuration: Configuration[A]) {
 
   private[sgap] val jGenotype = j.Genotype.randomInitialGenotype(configuration.jConfig)
   private[sgap] def jPop      = jGenotype.getPopulation
@@ -22,7 +22,7 @@ class Genotype[A: Chromosome] private (private[sgap] val configuration: Configur
       case Right(a)              => a
     }
 
-  def fitnessValue(chromosome: A): Double = chromosome.toJ(configuration).getFitnessValue
+  def fitnessValue(chromosome: A): Double = chromosome.toJ.getFitnessValue
 
   def population: Seq[A] =
     jPop.toChromosomes.toSeq.map(_.fromJ).collect {
@@ -31,7 +31,7 @@ class Genotype[A: Chromosome] private (private[sgap] val configuration: Configur
     }
 
   def add(newChromosome: A): Genotype[A] = {
-    jPop.addChromosome(newChromosome.toJ(configuration))
+    jPop.addChromosome(newChromosome.toJ)
     this
   }
 

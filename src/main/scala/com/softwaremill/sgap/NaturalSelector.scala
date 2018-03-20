@@ -33,7 +33,7 @@ class NaturalSelector[A: Chromosome: Configuration, Col <: Iterable[j.IChromosom
     //TODO: solve the "it cannot happen here problem with the conversions
     val input  = jChromos.map(_.fromJ).collect { case Right(a) => a }.toSeq
     val output = doSelect(input, a_howManyToSelect)
-    for (outJChromo ← output.map(_.toJ(implicitly[Configuration[A]]))) { //TODO: make implicit in caller
+    for (outJChromo ← output.map(_.toJ)) {
       outJChromo.setIsSelectedForNextGeneration(true)
       a_to_population.addChromosome(outJChromo)
     }

@@ -12,7 +12,7 @@ package object sgap {
 
     def genes: Vector[Gene[_, _ <: j.Gene]] = chromoA.genes(a)
 
-    def toJ(config: Configuration[A]): j.IChromosome = {
+    def toJ(implicit config: Configuration[A]): j.IChromosome = {
       val genes       = a.genes.map(_.jGene)
       val jChromosome = new j.Chromosome(config.jConfig, genes.toArray)
       jChromosome
