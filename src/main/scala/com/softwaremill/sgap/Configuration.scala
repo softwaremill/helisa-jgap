@@ -25,7 +25,7 @@ class Configuration[A: Chromosome] private (fitnessFunction: (A => Double)) {
   def randomGenerator_=(g: j.RandomGenerator): Unit = jConfig.setRandomGenerator(g)
 
   //TODO: what about removing? Add another layer of proxy?
-  def addNaturalSelector(selector: NaturalSelector[A, _], beforeGeneticOperators: Boolean): Unit = jConfig.addNaturalSelector(selector, beforeGeneticOperators)
+  def addNaturalSelector(selector: j.NaturalSelector, beforeGeneticOperators: Boolean): Unit = jConfig.addNaturalSelector(selector, beforeGeneticOperators)
 
 
 }
