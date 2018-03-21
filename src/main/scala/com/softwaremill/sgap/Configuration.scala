@@ -27,6 +27,7 @@ class Configuration[A: Chromosome] private (fitnessFunction: (A => Double)) {
   //TODO: what about removing? Add another layer of proxy?
   def addNaturalSelector(selector: j.NaturalSelector, beforeGeneticOperators: Boolean): Unit = jConfig.addNaturalSelector(selector, beforeGeneticOperators)
 
+  def addGeneticOperator(operator: j.GeneticOperator): Unit = jConfig.addGeneticOperator(operator)
 
 }
 
