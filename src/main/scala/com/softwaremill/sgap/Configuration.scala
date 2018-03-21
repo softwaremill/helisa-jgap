@@ -1,6 +1,7 @@
 package com.softwaremill.sgap
 
 import org.{jgap => j}
+import scala.collection.JavaConverters._
 class Configuration[A: Chromosome] private (fitnessFunction: (A => Double)) {
 
   private[sgap] val jConfig: j.Configuration = new j.impl.DefaultConfiguration
@@ -24,10 +25,24 @@ class Configuration[A: Chromosome] private (fitnessFunction: (A => Double)) {
   def randomGenerator: j.RandomGenerator = jConfig.getRandomGenerator
   def randomGenerator_=(g: j.RandomGenerator): Unit = jConfig.setRandomGenerator(g)
 
-  //TODO: what about removing? Add another layer of proxy?
-  def addNaturalSelector(selector: j.NaturalSelector, beforeGeneticOperators: Boolean): Unit = jConfig.addNaturalSelector(selector, beforeGeneticOperators)
+  lazy val naturalSelectorsPreGeneticOperators: ConfigurationParameters[j.NaturalSelector] = new NaturalSelectorConfigurationParameters(jConfig, isPre = true)
 
-  def addGeneticOperator(operator: j.GeneticOperator): Unit = jConfig.addGeneticOperator(operator)
+  lazy val naturalSelectorsPostGeneticOperators: ConfigurationParameters[j.NaturalSelector] = new NaturalSelectorConfigurationParameters(jConfig, isPre = false)
+
+  lazy val geneticOperators: ConfigurationParameters[j.GeneticOperator] = new ConfigurationParameters[j.GeneticOperator] {
+    def add(newValue: j.GeneticOperator): Unit = jConfig.addGeneticOperator(newValue)
+
+    def remove(toRemove: j.GeneticOperator): Unit = {
+      if(jConfig.isLocked) {
+        throw new UnsupportedOperationException("Cannot remove operator out of a configuration in use, please create a new Configuration!")
+      }
+      jConfig.getGeneticOperators.remove(toRemove)
+    }
+
+    def get(): Seq[j.GeneticOperator] = jConfig.getGeneticOperators.asInstanceOf[java.util.List[j.GeneticOperator]].asScala.view.toSeq
+
+    def size: Int = jConfig.getGeneticOperators.size()
+  }
 
 }
 
@@ -35,4 +50,26 @@ object Configuration {
 
   def apply[A: Chromosome](fitnessFunction: (A => Double)): Configuration[A] = new Configuration[A](fitnessFunction)
 
+}
+
+abstract class ConfigurationParameters[Param] private[sgap] () {
+
+  def get(): Seq[Param]
+
+  def add(newValue: Param): Unit
+
+  def remove(toRemove: Param): Unit
+
+  def size: Int
+
+}
+
+private class NaturalSelectorConfigurationParameters(jConfig: j.Configuration, isPre: Boolean) extends ConfigurationParameters[j.NaturalSelector] {
+  def get(): Seq[j.NaturalSelector] = jConfig.getNaturalSelectors(isPre).iterator().asInstanceOf[java.util.Iterator[j.NaturalSelector]].asScala.toSeq
+
+  def add(newValue: j.NaturalSelector): Unit = jConfig.addNaturalSelector(newValue, isPre)
+
+  def remove(toRemove: j.NaturalSelector): Unit = jConfig.removeNaturalSelectors(isPre)
+
+  def size: Int = jConfig.getNaturalSelectorsSize(isPre)
 }
