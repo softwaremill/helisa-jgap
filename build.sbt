@@ -26,6 +26,7 @@ val jgapDeps = Seq(
   "com.thoughtworks.xstream" % "xstream"       % "1.3.1"
 )
 
-val coreDeps = Seq("com.chuusai" %% "shapeless" % "2.3.2", "org.typelevel" %% "cats-core" % "1.1.0")
+val coreDeps = Seq("com.chuusai" %% "shapeless" % "2.3.2") ++
+  Seq("cats-core", "alleycats-core").map("org.typelevel" %% _ % "1.1.0")
 
 libraryDependencies ++= jgapDeps ++ coreDeps

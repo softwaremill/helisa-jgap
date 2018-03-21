@@ -1,29 +1,33 @@
 package com.softwaremill.sgap
 
+import alleycats.Pure
+import cats.MonoidK
+import cats.instances.all._
+import alleycats.std.all._
+import cats.syntax.semigroupk._
 import org.jgap.IChromosome
 import org.{jgap => j}
-import cats.Monoid
-import cats.instances.all._
 
 import scala.collection.JavaConverters._
+import scala.collection.immutable.Set
 
 object NaturalSelector {
 
-  def apply[A: Chromosome: Configuration](select: (Seq[A], Int) => Seq[A], doublettesAllowed: Boolean): NaturalSelector[A, _] =
+
+  def apply[A: Chromosome: Configuration](select: (Seq[A], Int) => Seq[A], doublettesAllowed: Boolean) =
     if (doublettesAllowed)
-      new NaturalSelector[A, List[j.IChromosome]](select, doublettesAllowed, new ListChromosomeAccumulator)
+      new NaturalSelector[A, List](select, doublettesAllowed)
     else
-      new NaturalSelector[A, Set[j.IChromosome]](select, doublettesAllowed, new SetChromosomeAccumulator)
+      new NaturalSelector[A, Set](select, doublettesAllowed)
 
 }
 
-class NaturalSelector[A: Chromosome: Configuration, Col <: Iterable[j.IChromosome]: Monoid] private (
+class NaturalSelector[A: Chromosome: Configuration, Col[_] <: Iterable[j.IChromosome]: MonoidK : Pure] private (
     doSelect: (Seq[A], Int) => Seq[A],
-    doublettesAllowed: Boolean,
-    accumulator: ChromosomeAccumulator[Col])
+    doublettesAllowed: Boolean)
     extends j.NaturalSelector {
 
-  protected var jChromos: Col = Monoid[Col].empty
+  protected var jChromos: Col[j.IChromosome] = MonoidK[Col].empty
 
   def returnsUniqueChromosomes(): Boolean = !doublettesAllowed
 
@@ -39,24 +43,11 @@ class NaturalSelector[A: Chromosome: Configuration, Col <: Iterable[j.IChromosom
     }
   }
 
-  def empty(): Unit = jChromos = Monoid[Col].empty
+  def empty(): Unit = jChromos = MonoidK[Col].empty
 
   def add(a_chromosomeToAdd: IChromosome): Unit = {
     a_chromosomeToAdd.setIsSelectedForNextGeneration(false)
-    jChromos = accumulator(jChromos)(a_chromosomeToAdd)
+    jChromos = jChromos.combineK(Pure[Col].pure(a_chromosomeToAdd))
   }
 }
 
-private trait ChromosomeAccumulator[Col <: Iterable[j.IChromosome]] {
-
-  def apply(current: Col)(chromo: j.IChromosome): Col
-
-}
-
-private class ListChromosomeAccumulator extends ChromosomeAccumulator[List[j.IChromosome]] {
-  def apply(current: List[j.IChromosome])(chromo: j.IChromosome): List[j.IChromosome] = current :+ chromo
-}
-
-private class SetChromosomeAccumulator extends ChromosomeAccumulator[Set[j.IChromosome]] {
-  def apply(current: Set[j.IChromosome])(chromo: j.IChromosome): Set[j.IChromosome] = current + chromo
-}
