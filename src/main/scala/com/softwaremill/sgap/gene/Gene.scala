@@ -9,38 +9,36 @@ import scala.collection.JavaConverters._
 trait Gene[Value, Underlying <: j.Gene] {
 
   def jGene: Underlying
-  def value: Value
+  def value: Value = jGene.getAllele.asInstanceOf[Value]
+
+  override def toString: String = jGene.toString
 
 }
 
 class BooleanGene(val jGene: j.impl.BooleanGene) extends Gene[Boolean, j.impl.BooleanGene] {
-  def value = jGene.getAllele.asInstanceOf[java.lang.Boolean]
+  override def value: Boolean = jGene.getAllele.asInstanceOf[java.lang.Boolean]
 }
 
 class IntOfMultipleGene(val jGene: j.impl.MutipleIntegerGene) extends Gene[Int, j.impl.MutipleIntegerGene] {
-  def value = jGene.getAllele.asInstanceOf[Integer]
+  override def value = jGene.getAllele.asInstanceOf[Integer]
 }
 
 class IntGene(val jGene: j.impl.IntegerGene) extends Gene[Int, j.impl.IntegerGene] {
-
-  def value = jGene.getAllele.asInstanceOf[Integer]
-
+  override def value = jGene.getAllele.asInstanceOf[Integer]
 }
 
 class DoubleGene(val jGene: j.impl.DoubleGene) extends Gene[Double, j.impl.DoubleGene] {
-  def value = jGene.getAllele.asInstanceOf[Double]
+  override def value = jGene.getAllele.asInstanceOf[Double]
 }
 
 class StringGene(val jGene: j.impl.StringGene) extends Gene[String, j.impl.StringGene] {
-  def value = jGene.getAllele.asInstanceOf[String]
 }
 
 class BitGene(val jGene: j.impl.FixedBinaryGene) extends Gene[Array[Int], j.impl.FixedBinaryGene] {
-  def value = jGene.getAllele.asInstanceOf[Array[Int]]
 }
 
 class DiscreteValueGene[+V](val jGene: j.impl.MapGene) extends Gene[Map[String, V @uncheckedVariance], j.impl.MapGene] {
-  def value = jGene.getAllele.asInstanceOf[Map[String, V]]
+  override def value = jGene.getAllele.asInstanceOf[Map[String, V]]
 }
 
 object Gene {
