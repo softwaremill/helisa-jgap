@@ -1,7 +1,8 @@
 package com.softwaremill.sgap.gene
 
-import com.softwaremill.sgap.Configuration
+import com.softwaremill.sgap._
 import org.{jgap => j}
+import scala.collection.JavaConverters._
 
 trait Gene[Value, Underlying <: j.Gene] {
 
@@ -10,56 +11,65 @@ trait Gene[Value, Underlying <: j.Gene] {
 
 }
 
-case class MultipleIntGene(jGene: j.impl.MutipleIntegerGene = new j.impl.MutipleIntegerGene())
-    extends Gene[Int, j.impl.MutipleIntegerGene] {
-
-  def value = jGene.getAllele.asInstanceOf[Integer]
-
-}
-
-object MultipleIntGene {
-
-  def apply(lowerBound: Int, upperBound: Int, multiple: Int)(implicit configuration: Configuration[_]): MultipleIntGene =
-    apply(new j.impl.MutipleIntegerGene(configuration.jConfig, lowerBound, upperBound, multiple))
-
-}
-
-case class IntGene(jGene: j.impl.IntegerGene = new j.impl.IntegerGene()) extends Gene[Int, j.impl.IntegerGene] {
-
-  def value = jGene.getAllele.asInstanceOf[Integer]
-
-  val copy = (u: j.impl.IntegerGene) => new IntGene(u)
-}
-
-object IntGene {
-
-  def apply(lowerBound: Int, upperBound: Int)(implicit configuration: Configuration[_]): IntGene =
-    apply(new j.impl.IntegerGene(configuration.jConfig, lowerBound, upperBound))
-
-}
-
-case class BooleanGene(jGene: j.impl.BooleanGene = new j.impl.BooleanGene()) extends Gene[Boolean, j.impl.BooleanGene] {
-
-  def this() = this(new j.impl.BooleanGene())
-
+class BooleanGene(val jGene: j.impl.BooleanGene) extends Gene[Boolean, j.impl.BooleanGene] {
   def value = jGene.getAllele.asInstanceOf[java.lang.Boolean]
+}
+
+class IntOfMultipleGene(val jGene: j.impl.MutipleIntegerGene) extends Gene[Int, j.impl.MutipleIntegerGene] {
+  def value = jGene.getAllele.asInstanceOf[Integer]
+}
+
+class IntGene(val jGene: j.impl.IntegerGene) extends Gene[Int, j.impl.IntegerGene] {
+
+  def value = jGene.getAllele.asInstanceOf[Integer]
 
 }
 
-object BooleanGene {
+class DoubleGene(val jGene: j.impl.DoubleGene) extends Gene[Double, j.impl.DoubleGene] {
+  def value = jGene.getAllele.asInstanceOf[Double]
+}
 
-  def apply(startValue: Boolean)(implicit configuration: Configuration[_]): BooleanGene =
-    apply(new j.impl.BooleanGene(configuration.jConfig, startValue))
+class StringGene(val jGene: j.impl.StringGene) extends Gene[String, j.impl.StringGene] {
+  def value = jGene.getAllele.asInstanceOf[String]
+}
 
+class BitGene(val jGene: j.impl.FixedBinaryGene) extends Gene[Array[Int], j.impl.FixedBinaryGene] {
+  def value = jGene.getAllele.asInstanceOf[Array[Int]]
+}
+
+class DiscreteValueGene[V](val jGene: j.impl.MapGene) extends Gene[Map[String, V], j.impl.MapGene] {
+  def value = jGene.getAllele.asInstanceOf[Map[String, V]]
 }
 
 object Gene {
 
-  def fromJ(jGene: j.Gene): Gene[_, _] = jGene match {
-    case g: j.impl.BooleanGene        => BooleanGene(g)
-    case g: j.impl.IntegerGene        => IntGene(g)
-    case g: j.impl.MutipleIntegerGene => MultipleIntGene(g)
-    case u                            => throw new UnsupportedOperationException(s"Unsupported JGAP gene conversion for type: ${u.getClass}")
+  type JGeneResolver = PartialFunction[j.Gene, Gene[_, _]]
+
+  def fromJ(jGene: j.Gene)(implicit resolver: JGeneResolver): Gene[_, _] = resolver(jGene)
+
+  object genes {
+
+    def boolean(value: Boolean = false)(implicit c: Configuration[_]) =
+      new BooleanGene(new j.impl.BooleanGene(c.jConfig, value))
+
+    def int(min: Int, max: Int)(implicit c: Configuration[_]) =
+      new IntGene(new j.impl.IntegerGene(c.jConfig, min, max))
+
+    def intOfMultiple(min: Int, max: Int, multiple: Int)(implicit c: Configuration[_]) =
+      new IntOfMultipleGene(new j.impl.MutipleIntegerGene(c.jConfig, min, max, multiple))
+
+    def double(min: Double, max: Double)(implicit c: Configuration[_]) =
+      new DoubleGene(new j.impl.DoubleGene(c.jConfig, min, max))
+
+    def string(alphabet: List[Char], minLength: Int, maxLenght: Int)(implicit c: Configuration[_]) =
+      new StringGene(new j.impl.StringGene(c.jConfig, minLength, maxLenght, alphabet.mkString))
+
+    def bit(minLength: Int, maxLength: Int)(implicit c: Configuration[_]) =
+      new IntGene(new j.impl.IntegerGene(c.jConfig, minLength, maxLength))
+
+    def discreteValues[V](valueMap: Map[String, V])(implicit c: Configuration[_]) =
+      new DiscreteValueGene[V](new j.impl.MapGene(c.jConfig, valueMap.asJava))
+
   }
 
 }

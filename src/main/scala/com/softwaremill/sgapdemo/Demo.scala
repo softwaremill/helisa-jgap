@@ -1,7 +1,7 @@
 package com.softwaremill.sgapdemo
 
 import com.softwaremill.sgap._
-import com.softwaremill.sgap.gene.{IntGene, MultipleIntGene}
+import com.softwaremill.sgap.gene.{IntGene, IntOfMultipleGene}
 
 object Demo extends App {
 
@@ -12,7 +12,7 @@ object Demo extends App {
 
   implicit val config: Configuration[CannyParameters] = Configuration(fitnessFunction)
 
-  config.sampleChromosome = CannyParameters(IntGene(0, 255), IntGene(0, 255), MultipleIntGene(0, 12, 2))
+  config.sampleChromosome = CannyParameters(genes.int(0, 255), genes.int(0, 255), genes.intOfMultiple(0, 12, 2))
   config.maxPopulationSize = 100
 
   val genotype = Genotype.randomGenotype(config)
@@ -23,4 +23,4 @@ object Demo extends App {
 
 }
 
-case class CannyParameters(low: IntGene, high: IntGene, blur: MultipleIntGene)
+case class CannyParameters(low: IntGene, high: IntGene, blur: IntOfMultipleGene)

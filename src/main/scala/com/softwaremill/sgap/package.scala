@@ -1,12 +1,15 @@
 package com.softwaremill
 
-import com.softwaremill.sgap.gene.Gene
+import com.softwaremill.sgap.gene.Gene.JGeneResolver
+import com.softwaremill.sgap.gene._
 import org.{jgap => j}
 import shapeless.ops.hlist.ToTraversable
 import shapeless.ops.traversable.FromTraversable
 import shapeless.{Generic, HList, Poly1}
 
 package object sgap {
+
+  val genes = Gene.genes
 
   implicit class ChromosomeOps[A](a: A)(implicit chromoA: Chromosome[A]) {
 
@@ -24,7 +27,18 @@ package object sgap {
     def fromJ: Either[String, A] = chromoA.fromJ(jChromo)
   }
 
-  implicit def caseClassChromosome[A, Repr <: HList](implicit g: Generic.Aux[A, Repr],
+  implicit def defaultResolver(implicit c: Configuration[_]): JGeneResolver = {
+    case g: j.impl.BooleanGene        => new BooleanGene(g)
+    case g: j.impl.IntegerGene        => new IntGene(g)
+    case g: j.impl.MutipleIntegerGene => new IntOfMultipleGene(g)
+    case g: j.impl.DoubleGene         => new DoubleGene(g)
+    case g: j.impl.StringGene         => new StringGene(g)
+    case g: j.impl.FixedBinaryGene    => new BitGene(g)
+    case g: j.impl.MapGene            => new DiscreteValueGene[Any](g)
+    case u                            => throw new UnsupportedOperationException(s"Unsupported JGAP gene conversion for type: ${u.getClass}")
+  }
+
+  implicit def caseClassChromosome[A : Configuration, Repr <: HList](implicit g: Generic.Aux[A, Repr],
                                                      tT: ToTraversable.Aux[Repr, Vector, Gene[_, _ <: j.Gene]],
                                                      fT: FromTraversable[Repr]): Chromosome[A] = {
     import shapeless.syntax.std.traversable._
