@@ -21,6 +21,17 @@ object NaturalSelector {
     else
       new NaturalSelector[A, Set](select, doublettesAllowed)
 
+  object selectors {
+
+    def standardPost()(implicit c: Configuration[_]) = new j.impl.StandardPostSelector(c.jConfig)
+
+    def threshold(rate: Double)(implicit c: Configuration[_]) = new j.impl.ThresholdSelector(c.jConfig, rate)
+
+    def tournament(tournamentSize: Int, bestSelectionProbability: Double)(implicit c: Configuration[_]) = new j.impl.TournamentSelector(c.jConfig, tournamentSize, bestSelectionProbability)
+
+    def weightedRoulette()(implicit c: Configuration[_]) = new j.impl.WeightedRouletteSelector(c.jConfig)
+  }
+
 }
 
 class NaturalSelector[A: Chromosome: Configuration, Col[_]: MonoidK: Pure: Traverse] private (doSelect: (Seq[A], Int) => Seq[A],

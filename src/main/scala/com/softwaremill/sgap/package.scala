@@ -13,6 +13,8 @@ package object sgap {
 
   val geneticOperators = GeneticOperator
 
+  val naturalSelectors = NaturalSelector.selectors
+
   implicit class ChromosomeOps[A](a: A)(implicit chromoA: Chromosome[A]) {
 
     def genes: Vector[Gene[_, _ <: j.Gene]] = chromoA.genes(a)
