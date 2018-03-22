@@ -4,7 +4,7 @@ import org.jgap.IChromosome
 import org.{jgap => j}
 import scala.collection.JavaConverters._
 
-class Genotype[A: Chromosome : Configuration] private (private[sgap] val configuration: Configuration[A]) {
+class Genotype[A: Chromosome : EvolutionRun] private(private[sgap] val configuration: EvolutionRun[A]) {
 
   private[sgap] val jGenotype = j.Genotype.randomInitialGenotype(configuration.jConfig)
   private[sgap] def jPop      = jGenotype.getPopulation
@@ -56,6 +56,6 @@ class Genotype[A: Chromosome : Configuration] private (private[sgap] val configu
 
 object Genotype {
 
-  def randomGenotype[A: Chromosome : Configuration](configuration: Configuration[A]): Genotype[A] = new Genotype[A](configuration)
+  def randomGenotype[A: Chromosome : EvolutionRun](configuration: EvolutionRun[A]): Genotype[A] = new Genotype[A](configuration)
 
 }

@@ -10,7 +10,7 @@ object Demo extends App {
     else
       ((cannyParams.low.value + cannyParams.high.value + cannyParams.blur.value) % 8.0) + 1.0
 
-  implicit val config: Configuration[CannyParameters] = Configuration(fitnessFunction)
+  implicit val config: EvolutionRun[CannyParameters] = EvolutionRun(fitnessFunction)
 
   config.sampleChromosome = CannyParameters(genes.int(0, 255), genes.int(0, 255), genes.intOfMultiple(0, 12, 2))
   config.maxPopulationSize = 100

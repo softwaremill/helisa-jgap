@@ -2,7 +2,7 @@ package com.softwaremill.sgap
 
 import org.{jgap => j}
 import scala.collection.JavaConverters._
-class Configuration[A: Chromosome] private (fitnessFunction: (A => Double)) {
+class EvolutionRun[A: Chromosome] private(fitnessFunction: (A => Double)) {
 
   private[sgap] val jConfig: j.Configuration = new j.impl.DefaultConfiguration
 
@@ -46,9 +46,9 @@ class Configuration[A: Chromosome] private (fitnessFunction: (A => Double)) {
 
 }
 
-object Configuration {
+object EvolutionRun {
 
-  def apply[A: Chromosome](fitnessFunction: (A => Double)): Configuration[A] = new Configuration[A](fitnessFunction)
+  def apply[A: Chromosome](fitnessFunction: (A => Double)): EvolutionRun[A] = new EvolutionRun[A](fitnessFunction)
 
 }
 
