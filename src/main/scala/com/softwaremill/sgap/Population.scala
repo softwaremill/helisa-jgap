@@ -4,12 +4,12 @@ import org.jgap.IChromosome
 import org.{jgap => j}
 import scala.collection.JavaConverters._
 
-class Genotype[A: Chromosome : EvolutionRun] private(private[sgap] val configuration: EvolutionRun[A]) {
+class Population[A: Chromosome : EvolutionRun] private(private[sgap] val configuration: EvolutionRun[A]) {
 
   private[sgap] val jGenotype = j.Genotype.randomInitialGenotype(configuration.jConfig)
   private[sgap] def jPop      = jGenotype.getPopulation
 
-  def evolve(numberOfEvolutions: Int = 1): Genotype[A] = {
+  def evolve(numberOfEvolutions: Int = 1): Population[A] = {
     jGenotype.evolve(numberOfEvolutions)
     this
   }
@@ -24,38 +24,38 @@ class Genotype[A: Chromosome : EvolutionRun] private(private[sgap] val configura
 
   def fitnessValue(chromosome: A): Double = chromosome.toJ.getFitnessValue
 
-  def population: Seq[A] =
+  def genotypes: Seq[A] =
     jPop.toChromosomes.toSeq.map(_.fromJ).collect {
       case Left(conversionError) => throw new IllegalStateException(conversionError)
       case Right(a)              => a
     }
 
-  def add(newChromosome: A): Genotype[A] = {
+  def add(newChromosome: A): Population[A] = {
     jPop.addChromosome(newChromosome.toJ)
     this
   }
 
-  def add(newChromosomes: Seq[A]): Genotype[A] = {
+  def add(newChromosomes: Seq[A]): Population[A] = {
     newChromosomes.foreach(add)
     this
   }
 
-  def fillPopulation(max: Int): Seq[A] = {
+  def fill(max: Int): Seq[A] = {
     jGenotype.fillPopulation(max)
-    population
+    genotypes
   }
 
   def keepPopSizeConstant(): Unit = jPop.keepPopSizeConstant()
 
-  def applyGeneticOperators(): Genotype[A] = {
+  def applyGeneticOperators(): Population[A] = {
     jGenotype.applyGeneticOperators()
     this
   }
 
 }
 
-object Genotype {
+object Population {
 
-  def randomGenotype[A: Chromosome : EvolutionRun](configuration: EvolutionRun[A]): Genotype[A] = new Genotype[A](configuration)
+  def randomGenotype[A: Chromosome : EvolutionRun](configuration: EvolutionRun[A]): Population[A] = new Population[A](configuration)
 
 }

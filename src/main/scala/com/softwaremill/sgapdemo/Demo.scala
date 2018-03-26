@@ -15,7 +15,7 @@ object Demo extends App {
   config.sampleChromosome = CannyParameters(genes.int(0, 255), genes.int(0, 255), genes.intOfMultiple(0, 12, 2))
   config.maxPopulationSize = 100
 
-  val genotype = Genotype.randomGenotype(config)
+  val genotype = Population.randomGenotype(config)
 
   genotype.evolve(1000)
 
