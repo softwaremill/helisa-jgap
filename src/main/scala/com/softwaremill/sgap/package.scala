@@ -22,6 +22,7 @@ package object sgap {
     def toJ(implicit config: EvolutionRun[A]): j.IChromosome = {
       val genes       = a.genes.map(_.jGene)
       val jChromosome = new j.Chromosome(config.jConfig, genes.toArray)
+      config.validator.map(_.toJ).foreach(jChromosome.setConstraintChecker)
       jChromosome
     }
 

@@ -2,7 +2,7 @@ package com.softwaremill.sgap
 
 import org.{jgap => j}
 import scala.collection.JavaConverters._
-class EvolutionRun[A: Chromosome] private(fitnessFunction: (A => Double)) {
+class EvolutionRun[A: Chromosome] private(fitnessFunction: A => Double) {
 
   private[sgap] val jConfig: j.Configuration = new j.impl.DefaultConfiguration
 
@@ -24,6 +24,12 @@ class EvolutionRun[A: Chromosome] private(fitnessFunction: (A => Double)) {
 
   def randomGenerator: j.RandomGenerator = jConfig.getRandomGenerator
   def randomGenerator_=(g: j.RandomGenerator): Unit = jConfig.setRandomGenerator(g)
+
+  private var validatorActual: Option[ChromosomeValidator[A]] = None
+  def validator: Option[ChromosomeValidator[A]] = validatorActual
+  def validator_=(v: ChromosomeValidator[A]): Unit = {
+    validatorActual = Some(v)
+  }
 
   lazy val naturalSelectorsPreGeneticOperators: ConfigurationParameters[j.NaturalSelector] = new NaturalSelectorConfigurationParameters(jConfig, isPre = true)
 
@@ -48,7 +54,7 @@ class EvolutionRun[A: Chromosome] private(fitnessFunction: (A => Double)) {
 
 object EvolutionRun {
 
-  def apply[A: Chromosome](fitnessFunction: (A => Double)): EvolutionRun[A] = new EvolutionRun[A](fitnessFunction)
+  def apply[A: Chromosome](fitnessFunction: A => Double): EvolutionRun[A] = new EvolutionRun[A](fitnessFunction)
 
 }
 

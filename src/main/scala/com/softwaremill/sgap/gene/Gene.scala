@@ -45,7 +45,7 @@ object Gene {
 
   type JGeneResolver = PartialFunction[j.Gene, Gene[_, _]]
 
-  def fromJ(jGene: j.Gene)(implicit resolver: JGeneResolver): Gene[_, _] = resolver(jGene)
+  def fromJ[V](jGene: j.Gene)(implicit resolver: JGeneResolver): Gene[V, _] = resolver(jGene).asInstanceOf[Gene[V, _]]
 
   object genes {
 
