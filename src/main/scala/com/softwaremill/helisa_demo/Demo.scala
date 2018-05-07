@@ -1,7 +1,7 @@
-package com.softwaremill.sgapdemo
+package com.softwaremill.helisa_demo
 
-import com.softwaremill.sgap._
-import com.softwaremill.sgap.gene.{Gene, IntGene, IntOfMultipleGene}
+import com.softwaremill.helisa._
+import com.softwaremill.helisa.gene.{Gene, IntGene, IntOfMultipleGene}
 
 object Demo extends App {
 

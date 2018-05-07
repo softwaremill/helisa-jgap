@@ -1,4 +1,4 @@
-package com.softwaremill.sgap
+package com.softwaremill.helisa
 
 import org.jgap.IChromosome
 import org.jgap.{FitnessFunction => JFitness}

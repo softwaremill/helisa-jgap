@@ -1,4 +1,4 @@
-package com.softwaremill.sgap
+package com.softwaremill.helisa
 
 import alleycats.Pure
 import cats.instances.all._

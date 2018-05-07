@@ -1,5 +1,5 @@
-package com.softwaremill.sgap
-import com.softwaremill.sgap.gene.Gene
+package com.softwaremill.helisa
+import com.softwaremill.helisa.gene.Gene
 import org.{jgap => j}
 
 

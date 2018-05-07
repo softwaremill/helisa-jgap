@@ -1,13 +1,13 @@
-package com.softwaremill.sgap
+package com.softwaremill.helisa
 
 import org.jgap.IChromosome
 import org.{jgap => j}
 import scala.collection.JavaConverters._
 
-class Population[A: Chromosome : EvolutionRun] private(private[sgap] val configuration: EvolutionRun[A]) {
+class Population[A: Chromosome : EvolutionRun] private(private[helisa] val configuration: EvolutionRun[A]) {
 
-  private[sgap] val jGenotype = j.Genotype.randomInitialGenotype(configuration.jConfig)
-  private[sgap] def jPop      = jGenotype.getPopulation
+  private[helisa] val jGenotype = j.Genotype.randomInitialGenotype(configuration.jConfig)
+  private[helisa] def jPop      = jGenotype.getPopulation
 
   def evolve(numberOfEvolutions: Int = 1): Population[A] = {
     jGenotype.evolve(numberOfEvolutions)

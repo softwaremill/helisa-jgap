@@ -1,4 +1,4 @@
-package com.softwaremill.sgap
+package com.softwaremill.helisa
 
 import org.jgap.impl._
 import org.{jgap => j}

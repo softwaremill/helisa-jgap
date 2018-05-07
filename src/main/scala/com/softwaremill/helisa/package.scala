@@ -1,13 +1,13 @@
 package com.softwaremill
 
-import com.softwaremill.sgap.gene.Gene.JGeneResolver
-import com.softwaremill.sgap.gene._
+import com.softwaremill.helisa.gene.Gene.JGeneResolver
+import com.softwaremill.helisa.gene._
 import org.{jgap => j}
 import shapeless.ops.hlist.ToTraversable
 import shapeless.ops.traversable.FromTraversable
 import shapeless.{Generic, HList, Poly1}
 
-package object sgap {
+package object helisa {
 
   val genes = Gene.genes
 

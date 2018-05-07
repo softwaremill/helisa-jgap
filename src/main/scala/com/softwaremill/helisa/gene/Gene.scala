@@ -1,6 +1,6 @@
-package com.softwaremill.sgap.gene
+package com.softwaremill.helisa.gene
 
-import com.softwaremill.sgap._
+import com.softwaremill.helisa._
 import org.{jgap => j}
 
 import scala.annotation.unchecked.uncheckedVariance

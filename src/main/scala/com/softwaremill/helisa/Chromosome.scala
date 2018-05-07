@@ -1,6 +1,6 @@
-package com.softwaremill.sgap
+package com.softwaremill.helisa
 
-import com.softwaremill.sgap.gene.Gene
+import com.softwaremill.helisa.gene.Gene
 import org.{jgap => j}
 
 trait Chromosome[A] {

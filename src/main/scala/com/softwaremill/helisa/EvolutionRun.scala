@@ -1,10 +1,10 @@
-package com.softwaremill.sgap
+package com.softwaremill.helisa
 
 import org.{jgap => j}
 import scala.collection.JavaConverters._
 class EvolutionRun[A: Chromosome] private(fitnessFunction: A => Double) {
 
-  private[sgap] val jConfig: j.Configuration = new j.impl.DefaultConfiguration
+  private[helisa] val jConfig: j.Configuration = new j.impl.DefaultConfiguration
 
   {
     jConfig.setFitnessFunction((jChromo: j.IChromosome) => jChromo.fromJ.map(fitnessFunction).getOrElse(0))
@@ -58,7 +58,7 @@ object EvolutionRun {
 
 }
 
-abstract class ConfigurationParameters[Param] private[sgap] () {
+abstract class ConfigurationParameters[Param] private[helisa]() {
 
   def get(): Seq[Param]
 
