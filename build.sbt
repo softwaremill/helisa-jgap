@@ -3,10 +3,8 @@ version := "0.1"
 
 scalaVersion := "2.12.4"
 
-addCompilerPlugin("io.tryp"        % "splain"          % "0.2.7" cross CrossVersion.patch)
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6")
 
-scalacOptions += "-P:splain:implicits:true"
 scalacOptions += "-Ypartial-unification"
 
 val jgapDeps = Seq(
