@@ -11,7 +11,6 @@ object Demo extends App {
   implicit val config: EvolutionRun[CannyParameters] = EvolutionRun(fitnessFunction)
 
 
-  //^necessary because otherwise
   config.validator = ChromosomeValidator((gene: Gene[_, _], chromosome: CannyParameters, index: Int) => {
     val value = gene.value.asInstanceOf[Int]
     if (index == 2) {
