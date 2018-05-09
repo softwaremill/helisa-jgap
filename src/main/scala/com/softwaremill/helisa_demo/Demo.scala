@@ -1,7 +1,8 @@
 package com.softwaremill.helisa_demo
 
 import com.softwaremill.helisa._
-import com.softwaremill.helisa.gene.{Gene, IntGene, IntOfMultipleGene}
+import com.softwaremill.helisa.gene.Gene.{IntGene, IntOfMultipleGene}
+import com.softwaremill.helisa.gene.Gene
 
 object Demo extends App {
 
@@ -11,7 +12,7 @@ object Demo extends App {
   implicit val config: EvolutionRun[CannyParameters] = EvolutionRun(fitnessFunction)
 
 
-  config.validator = ChromosomeValidator((gene: Gene[_, _], chromosome: CannyParameters, index: Int) => {
+  config.validator = ChromosomeValidator((gene: Gene[_], chromosome: CannyParameters, index: Int) => {
     val value = gene.value.asInstanceOf[Int]
     if (index == 2) {
       true

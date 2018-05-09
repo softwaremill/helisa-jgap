@@ -1,6 +1,6 @@
 package com.softwaremill
 
-import com.softwaremill.helisa.gene.Gene.JGeneResolver
+import com.softwaremill.helisa.gene.Gene._
 import com.softwaremill.helisa.gene._
 import org.{jgap => j}
 import shapeless.ops.hlist.ToTraversable
@@ -17,10 +17,10 @@ package object helisa {
 
   implicit class ChromosomeOps[A](a: A)(implicit chromoA: Chromosome[A]) {
 
-    def genes: Vector[Gene[_, _ <: j.Gene]] = chromoA.genes(a)
+    def genes: Vector[Gene[_]] = chromoA.genes(a)
 
     def toJ(implicit config: EvolutionRun[A]): j.IChromosome = {
-      val genes       = a.genes.map(_.jGene)
+      val genes: Seq[j.Gene]       = a.genes.map(_.jGene)
       val jChromosome = new j.Chromosome(config.jConfig, genes.toArray)
       config.validator.map(_.toJ).foreach(jChromosome.setConstraintChecker)
       jChromosome
@@ -44,12 +44,12 @@ package object helisa {
   }
 
   implicit def caseClassChromosome[A : EvolutionRun, Repr <: HList](implicit g: Generic.Aux[A, Repr],
-                                                                    tT: ToTraversable.Aux[Repr, Vector, Gene[_, _ <: j.Gene]],
+                                                                    tT: ToTraversable.Aux[Repr, Vector, Gene[_]],
                                                                     fT: FromTraversable[Repr]): Chromosome[A] = {
     import shapeless.syntax.std.traversable._
 
     new Chromosome[A] {
-      def genes(a: A): Vector[Gene[_, _ <: j.Gene]] = {
+      def genes(a: A): Vector[Gene[_]] = {
         val repr = g.to(a)
         tT(repr)
       }
