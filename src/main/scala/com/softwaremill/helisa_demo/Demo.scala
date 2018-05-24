@@ -11,7 +11,6 @@ object Demo extends App {
 
   implicit val evolver: Evololver[CannyParameters] = Evololver(fitnessFunction)
 
-
   evolver.validator = ChromosomeValidator((gene: Gene[_], chromosome: CannyParameters, index: Int) => {
     val value = gene.value.asInstanceOf[Int]
     if (index == 2) {
@@ -21,7 +20,6 @@ object Demo extends App {
       high > low
     }
   })
-
 
   evolver.sampleChromosome = CannyParameters(genes.int(0, 255), genes.int(0, 255), genes.intOfMultiple(0, 12, 2))
   evolver.maxPopulationSize = 100
