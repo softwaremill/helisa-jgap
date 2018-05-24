@@ -2,7 +2,7 @@ package com.softwaremill.helisa
 
 import org.{jgap => j}
 import scala.collection.JavaConverters._
-class EvolutionRun[A: Chromosome] private(fitnessFunction: A => Double) {
+class Evololver[A: Chromosome] private(fitnessFunction: A => Double) {
 
   private[helisa] val jConfig: j.Configuration = new j.impl.DefaultConfiguration
 
@@ -52,9 +52,9 @@ class EvolutionRun[A: Chromosome] private(fitnessFunction: A => Double) {
 
 }
 
-object EvolutionRun {
+object Evololver {
 
-  def apply[A: Chromosome](fitnessFunction: A => Double): EvolutionRun[A] = new EvolutionRun[A](fitnessFunction)
+  def apply[A: Chromosome](fitnessFunction: A => Double): Evololver[A] = new Evololver[A](fitnessFunction)
 
 }
 

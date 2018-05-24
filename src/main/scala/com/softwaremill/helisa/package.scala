@@ -19,7 +19,7 @@ package object helisa {
 
     def genes: Vector[Gene[_]] = chromoA.genes(a)
 
-    def toJ(implicit config: EvolutionRun[A]): j.IChromosome = {
+    def toJ(implicit config: Evololver[A]): j.IChromosome = {
       val genes: Seq[j.Gene]       = a.genes.map(_.jGene)
       val jChromosome = new j.Chromosome(config.jConfig, genes.toArray)
       config.validator.map(_.toJ).foreach(jChromosome.setConstraintChecker)
@@ -32,7 +32,7 @@ package object helisa {
     def fromJ: Either[String, A] = chromoA.fromJ(jChromo)
   }
 
-  implicit def defaultResolver(implicit c: EvolutionRun[_]): JGeneResolver = {
+  implicit def defaultResolver(implicit c: Evololver[_]): JGeneResolver = {
     case g: j.impl.BooleanGene        => new BooleanGene(g)
     case g: j.impl.IntegerGene        => new IntGene(g)
     case g: j.impl.MutipleIntegerGene => new IntOfMultipleGene(g)
@@ -43,9 +43,9 @@ package object helisa {
     case u                            => throw new UnsupportedOperationException(s"Unsupported JGAP gene conversion for type: ${u.getClass}")
   }
 
-  implicit def caseClassChromosome[A : EvolutionRun, Repr <: HList](implicit g: Generic.Aux[A, Repr],
-                                                                    tT: ToTraversable.Aux[Repr, Vector, Gene[_]],
-                                                                    fT: FromTraversable[Repr]): Chromosome[A] = {
+  implicit def caseClassChromosome[A : Evololver, Repr <: HList](implicit g: Generic.Aux[A, Repr],
+                                                                 tT: ToTraversable.Aux[Repr, Vector, Gene[_]],
+                                                                 fT: FromTraversable[Repr]): Chromosome[A] = {
     import shapeless.syntax.std.traversable._
 
     new Chromosome[A] {

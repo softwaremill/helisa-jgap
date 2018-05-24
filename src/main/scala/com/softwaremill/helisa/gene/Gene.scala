@@ -54,25 +54,25 @@ object Gene {
 
   object genes {
 
-    def boolean(value: Boolean = false)(implicit c: EvolutionRun[_]) =
+    def boolean(value: Boolean = false)(implicit c: Evololver[_]) =
       new BooleanGene(new j.impl.BooleanGene(c.jConfig, value))
 
-    def int(min: Int, max: Int)(implicit c: EvolutionRun[_]) =
+    def int(min: Int, max: Int)(implicit c: Evololver[_]) =
       new IntGene(new j.impl.IntegerGene(c.jConfig, min, max))
 
-    def intOfMultiple(min: Int, max: Int, multiple: Int)(implicit c: EvolutionRun[_]) =
+    def intOfMultiple(min: Int, max: Int, multiple: Int)(implicit c: Evololver[_]) =
       new IntOfMultipleGene(new j.impl.MutipleIntegerGene(c.jConfig, min, max, multiple))
 
-    def double(min: Double, max: Double)(implicit c: EvolutionRun[_]) =
+    def double(min: Double, max: Double)(implicit c: Evololver[_]) =
       new DoubleGene(new j.impl.DoubleGene(c.jConfig, min, max))
 
-    def string(alphabet: List[Char], minLength: Int, maxLenght: Int)(implicit c: EvolutionRun[_]) =
+    def string(alphabet: List[Char], minLength: Int, maxLenght: Int)(implicit c: Evololver[_]) =
       new StringGene(new j.impl.StringGene(c.jConfig, minLength, maxLenght, alphabet.mkString))
 
-    def bit(minLength: Int, maxLength: Int)(implicit c: EvolutionRun[_]) =
+    def bit(minLength: Int, maxLength: Int)(implicit c: Evololver[_]) =
       new IntGene(new j.impl.IntegerGene(c.jConfig, minLength, maxLength))
 
-    def discreteValues[V](valueMap: Map[String, V])(implicit c: EvolutionRun[_]) =
+    def discreteValues[V](valueMap: Map[String, V])(implicit c: Evololver[_]) =
       new DiscreteValueGene[V](new j.impl.MapGene(c.jConfig, valueMap.asJava))
 
   }

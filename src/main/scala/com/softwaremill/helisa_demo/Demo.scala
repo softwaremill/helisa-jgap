@@ -9,10 +9,10 @@ object Demo extends App {
   val fitnessFunction = (cannyParams: CannyParameters) =>
     ((cannyParams.low.value + cannyParams.high.value + cannyParams.blur.value) % 8.0) + 1.0
 
-  implicit val config: EvolutionRun[CannyParameters] = EvolutionRun(fitnessFunction)
+  implicit val evolver: Evololver[CannyParameters] = Evololver(fitnessFunction)
 
 
-  config.validator = ChromosomeValidator((gene: Gene[_], chromosome: CannyParameters, index: Int) => {
+  evolver.validator = ChromosomeValidator((gene: Gene[_], chromosome: CannyParameters, index: Int) => {
     val value = gene.value.asInstanceOf[Int]
     if (index == 2) {
       true
@@ -23,10 +23,10 @@ object Demo extends App {
   })
 
 
-  config.sampleChromosome = CannyParameters(genes.int(0, 255), genes.int(0, 255), genes.intOfMultiple(0, 12, 2))
-  config.maxPopulationSize = 100
+  evolver.sampleChromosome = CannyParameters(genes.int(0, 255), genes.int(0, 255), genes.intOfMultiple(0, 12, 2))
+  evolver.maxPopulationSize = 100
 
-  val genotype = Population.randomGenotype(config)
+  val genotype = Population.randomGenotype(evolver)
 
   genotype.evolve(1000)
 

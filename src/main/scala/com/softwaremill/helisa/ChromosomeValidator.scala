@@ -3,7 +3,7 @@ import com.softwaremill.helisa.gene.Gene
 import org.{jgap => j}
 
 
-abstract class ChromosomeValidator[A: Chromosome : EvolutionRun] {
+abstract class ChromosomeValidator[A: Chromosome : Evololver] {
 
   def validate(gene: Gene[_], chromosome: A, index: Int): Boolean
 
@@ -19,7 +19,7 @@ abstract class ChromosomeValidator[A: Chromosome : EvolutionRun] {
 object ChromosomeValidator {
 
   //for some reason this is necessary (default conversion doesn't work - maybe because this is an AC not a trait?
-  def apply[A : Chromosome : EvolutionRun](v: (Gene[_], A, Int) =>  Boolean): ChromosomeValidator[A] = new ChromosomeValidator[A] {
+  def apply[A : Chromosome : Evololver](v: (Gene[_], A, Int) =>  Boolean): ChromosomeValidator[A] = new ChromosomeValidator[A] {
     override def validate(gene: Gene[_], chromosome: A, index: Int): Boolean = v(gene, chromosome, index)
   }
 }
