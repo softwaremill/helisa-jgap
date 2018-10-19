@@ -5,7 +5,7 @@ import org.{jgap => j}
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
-class Evololver[A: Chromosome] private (fitnessFunction: A => Double) {
+class Evolver[G: Genotype] private (fitnessFunction: G => Double) {
 
   private[helisa] val jConfig: j.Configuration = new j.impl.DefaultConfiguration
 
@@ -23,10 +23,10 @@ class Evololver[A: Chromosome] private (fitnessFunction: A => Double) {
     jConfig.setFitnessFunction(fitnessFunctionThroughEc(_))
   }
 
-  def sampleChromosome: A =
+  def sampleGenotype: G =
     jConfig.getSampleChromosome.fromJ
-      .fold(_ => throw new IllegalStateException("Cannot convert sample chromosome, check your implicits"), identity)
-  def sampleChromosome_=(sampleChromosome: A): Unit = jConfig.setSampleChromosome(sampleChromosome.toJ(this))
+      .fold(_ => throw new IllegalStateException("Cannot convert sample genotype, check your implicits"), identity)
+  def sampleGenotype_=(sampleGenotype: G): Unit = jConfig.setSampleChromosome(sampleGenotype.toJ(this))
 
   def maxPopulationSize_=(size: Int): Unit = jConfig.setPopulationSize(size)
   def maxPopulationSize: Int               = jConfig.getPopulationSize
@@ -37,9 +37,9 @@ class Evololver[A: Chromosome] private (fitnessFunction: A => Double) {
   def randomGenerator: j.RandomGenerator            = jConfig.getRandomGenerator
   def randomGenerator_=(g: j.RandomGenerator): Unit = jConfig.setRandomGenerator(g)
 
-  private var validatorActual: Option[ChromosomeValidator[A]] = None
-  def validator: Option[ChromosomeValidator[A]]               = validatorActual
-  def validator_=(v: ChromosomeValidator[A]): Unit =
+  private var validatorActual: Option[GenotypeValidator[G]] = None
+  def validator: Option[GenotypeValidator[G]]               = validatorActual
+  def validator_=(v: GenotypeValidator[G]): Unit =
     validatorActual = Some(v)
 
   lazy val naturalSelectorsPreGeneticOperators: ConfigurationParameters[j.NaturalSelector] =
@@ -67,9 +67,9 @@ class Evololver[A: Chromosome] private (fitnessFunction: A => Double) {
 
 }
 
-object Evololver {
+object Evolver {
 
-  def apply[A: Chromosome](fitnessFunction: A => Double): Evololver[A] = new Evololver[A](fitnessFunction)
+  def apply[A: Genotype](fitnessFunction: A => Double): Evolver[A] = new Evolver[A](fitnessFunction)
 
 }
 

@@ -15,7 +15,7 @@ import scala.language.higherKinds
 
 object NaturalSelector {
 
-  def apply[A: Chromosome: Evololver](select: (Seq[A], Int) => Seq[A], doublettesAllowed: Boolean) =
+  def apply[A: Genotype: Evolver](select: (Seq[A], Int) => Seq[A], doublettesAllowed: Boolean) =
     if (doublettesAllowed)
       new NaturalSelector[A, List](select, doublettesAllowed)
     else
@@ -23,19 +23,20 @@ object NaturalSelector {
 
   object selectors {
 
-    def standardPost()(implicit c: Evololver[_]) = new j.impl.StandardPostSelector(c.jConfig)
+    def standardPost()(implicit c: Evolver[_]) = new j.impl.StandardPostSelector(c.jConfig)
 
-    def threshold(rate: Double)(implicit c: Evololver[_]) = new j.impl.ThresholdSelector(c.jConfig, rate)
+    def threshold(rate: Double)(implicit c: Evolver[_]) = new j.impl.ThresholdSelector(c.jConfig, rate)
 
-    def tournament(tournamentSize: Int, bestSelectionProbability: Double)(implicit c: Evololver[_]) = new j.impl.TournamentSelector(c.jConfig, tournamentSize, bestSelectionProbability)
+    def tournament(tournamentSize: Int, bestSelectionProbability: Double)(implicit c: Evolver[_]) =
+      new j.impl.TournamentSelector(c.jConfig, tournamentSize, bestSelectionProbability)
 
-    def weightedRoulette()(implicit c: Evololver[_]) = new j.impl.WeightedRouletteSelector(c.jConfig)
+    def weightedRoulette()(implicit c: Evolver[_]) = new j.impl.WeightedRouletteSelector(c.jConfig)
   }
 
 }
 
-class NaturalSelector[A: Chromosome: Evololver, Col[_]: MonoidK: Pure: Traverse] private(doSelect: (Seq[A], Int) => Seq[A],
-                                                                                         doublettesAllowed: Boolean)
+class NaturalSelector[A: Genotype: Evolver, Col[_]: MonoidK: Pure: Traverse] private (doSelect: (Seq[A], Int) => Seq[A],
+                                                                                      doublettesAllowed: Boolean)
     extends j.NaturalSelector {
 
   private var jChromos: Col[j.IChromosome] = MonoidK[Col].empty

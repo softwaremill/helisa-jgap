@@ -4,54 +4,54 @@ import org.jgap.IChromosome
 import org.{jgap => j}
 import scala.collection.JavaConverters._
 
-class Population[A: Chromosome: Evololver] private (private[helisa] val configuration: Evololver[A]) {
+class Population[G: Genotype: Evolver] private (private[helisa] val configuration: Evolver[G]) {
 
   private[helisa] val jGenotype = j.Genotype.randomInitialGenotype(configuration.jConfig)
   private[helisa] def jPop      = jGenotype.getPopulation
 
-  def evolve(numberOfEvolutions: Int = 1): Population[A] = {
+  def evolve(numberOfEvolutions: Int = 1): Population[G] = {
     jGenotype.evolve(numberOfEvolutions)
     this
   }
 
-  def fittest[A1: Phenotype[A, ?]]: Option[A1] = fittestChromosome.map(_.toPhenotype)
+  def fittest[A: Phenotype[G, ?]]: Option[A] = fittestGenotype.map(_.toPhenotype)
 
-  def fittest[A1: Phenotype[A, ?]](num: Int): Seq[A1] = fittestChromosomes(num).map(_.toPhenotype)
+  def fittest[A: Phenotype[G, ?]](num: Int): Seq[A] = fittestGenotypes(num).map(_.toPhenotype)
 
-  def fittestChromosome: Option[A] = Option(jGenotype.getFittestChromosome).flatMap(_.fromJ.toOption)
+  def fittestGenotype: Option[G] = Option(jGenotype.getFittestChromosome).flatMap(_.fromJ.toOption)
 
-  def fittestChromosomes(num: Int): Seq[A] =
+  def fittestGenotypes(num: Int): Seq[G] =
     jGenotype.getFittestChromosomes(num).asInstanceOf[java.util.List[IChromosome]].asScala.map(_.fromJ).collect {
       case Left(conversionError) => throw new IllegalStateException(conversionError)
       case Right(a)              => a
     }
 
-  def fitnessValue(chromosome: A): Double = chromosome.toJ.getFitnessValue
+  def fitnessValue(genotype: G): Double = genotype.toJ.getFitnessValue
 
-  def genotypes: Seq[A] =
+  def genotypes: Seq[G] =
     jPop.toChromosomes.toSeq.map(_.fromJ).collect {
       case Left(conversionError) => throw new IllegalStateException(conversionError)
       case Right(a)              => a
     }
 
-  def add(newChromosome: A): Population[A] = {
-    jPop.addChromosome(newChromosome.toJ)
+  def add(newGenoype: G): Population[G] = {
+    jPop.addChromosome(newGenoype.toJ)
     this
   }
 
-  def add(newChromosomes: Seq[A]): Population[A] = {
-    newChromosomes.foreach(add)
+  def add(newGenotype: Seq[G]): Population[G] = {
+    newGenotype.foreach(add)
     this
   }
 
-  def fill(max: Int): Seq[A] = {
+  def fill(max: Int): Seq[G] = {
     jGenotype.fillPopulation(max)
     genotypes
   }
 
   def keepPopSizeConstant(): Unit = jPop.keepPopSizeConstant()
 
-  def applyGeneticOperators(): Population[A] = {
+  def applyGeneticOperators(): Population[G] = {
     jGenotype.applyGeneticOperators()
     this
   }
@@ -60,6 +60,6 @@ class Population[A: Chromosome: Evololver] private (private[helisa] val configur
 
 object Population {
 
-  def randomGenotype[A: Chromosome: Evololver](configuration: Evololver[A]): Population[A] = new Population[A](configuration)
+  def randomGenotype[G: Genotype: Evolver](configuration: Evolver[G]): Population[G] = new Population[G](configuration)
 
 }
