@@ -1,7 +1,7 @@
 name := "helisa-jgap"
 version := "0.1"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.7"
 
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6")
 
@@ -27,4 +27,8 @@ val jgapDeps = Seq(
 val coreDeps = Seq("com.chuusai" %% "shapeless" % "2.3.2") ++
   Seq("cats-core", "alleycats-core").map("org.typelevel" %% _ % "1.1.0")
 
-libraryDependencies ++= jgapDeps ++ coreDeps
+val testDeps = Seq("org.scalatest" %% "scalatest" % "3.0.5",
+  "org.scalacheck" %% "scalacheck" % "1.14.0",
+  "com.github.alexarchambault" %% "scalacheck-shapeless_1.13" % "1.1.6").map(_ % "test")
+
+libraryDependencies ++= jgapDeps ++ coreDeps ++ testDeps
