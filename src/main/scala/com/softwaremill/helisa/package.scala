@@ -20,8 +20,8 @@ package object helisa {
     def genes: Vector[Gene[_]] = chromoA.genes(a)
 
     def toJ(implicit config: Evololver[A]): j.IChromosome = {
-      val genes: Seq[j.Gene]       = a.genes.map(_.jGene)
-      val jChromosome = new j.Chromosome(config.jConfig, genes.toArray)
+      val genes: Seq[j.Gene] = a.genes.map(_.jGene)
+      val jChromosome        = new j.Chromosome(config.jConfig, genes.toArray)
       config.validator.map(_.toJ).foreach(jChromosome.setConstraintChecker)
       jChromosome
     }
@@ -43,9 +43,9 @@ package object helisa {
     case u                            => throw new UnsupportedOperationException(s"Unsupported JGAP gene conversion for type: ${u.getClass}")
   }
 
-  implicit def caseClassChromosome[A : Evololver, Repr <: HList](implicit g: Generic.Aux[A, Repr],
-                                                                 tT: ToTraversable.Aux[Repr, Vector, Gene[_]],
-                                                                 fT: FromTraversable[Repr]): Chromosome[A] = {
+  implicit def caseClassChromosome[A: Evololver, Repr <: HList](implicit g: Generic.Aux[A, Repr],
+                                                                tT: ToTraversable.Aux[Repr, Vector, Gene[_]],
+                                                                fT: FromTraversable[Repr]): Chromosome[A] = {
     import shapeless.syntax.std.traversable._
 
     new Chromosome[A] {
@@ -60,5 +60,9 @@ package object helisa {
       }
     }
 
+  }
+
+  implicit class PhenotypeOps[G](g: G) {
+    def toPhenotype[A](implicit p: Phenotype[G, A]): A = p.convert(g)
   }
 }
