@@ -1,7 +1,6 @@
-package com.softwaremill.helisa.gene
+package com.softwaremill.helisa.api
 
 import com.softwaremill.helisa._
-import org.jgap.impl.{BooleanGene, DoubleGene, StringGene}
 import org.{jgap => j}
 
 import scala.annotation.unchecked.uncheckedVariance

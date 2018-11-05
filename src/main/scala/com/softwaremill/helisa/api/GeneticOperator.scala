@@ -1,5 +1,6 @@
-package com.softwaremill.helisa
+package com.softwaremill.helisa.api
 
+import com.softwaremill.helisa._
 import org.jgap.impl._
 import org.{jgap => j}
 

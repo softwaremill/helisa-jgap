@@ -1,11 +1,12 @@
-package com.softwaremill.helisa
+package com.softwaremill.helisa.api
 
 import alleycats.Pure
-import cats.instances.all._
 import alleycats.std.all._
+import cats.instances.all._
 import cats.syntax.foldable._
 import cats.syntax.semigroupk._
 import cats.{MonoidK, Traverse}
+import com.softwaremill.helisa._
 import org.jgap.IChromosome
 import org.{jgap => j}
 

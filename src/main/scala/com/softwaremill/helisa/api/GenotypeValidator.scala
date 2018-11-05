@@ -1,5 +1,6 @@
-package com.softwaremill.helisa
-import com.softwaremill.helisa.gene.Gene
+package com.softwaremill.helisa.api
+
+import com.softwaremill.helisa._
 import org.{jgap => j}
 
 abstract class GenotypeValidator[G: Genotype: Evolver] {

@@ -1,6 +1,5 @@
 package com.softwaremill.helisa
-
-import com.softwaremill.helisa.gene.Gene
+import com.softwaremill.helisa.api.Gene
 import org.{jgap => j}
 
 import scala.annotation.implicitNotFound

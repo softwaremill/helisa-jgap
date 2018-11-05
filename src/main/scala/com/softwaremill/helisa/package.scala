@@ -1,7 +1,7 @@
 package com.softwaremill
 
-import com.softwaremill.helisa.gene.Gene._
-import com.softwaremill.helisa.gene._
+import com.softwaremill.helisa.api.{Gene, GeneticOperator, Genotype, NaturalSelector}
+import Gene._
 import org.{jgap => j}
 import shapeless.ops.hlist.ToTraversable
 import shapeless.ops.traversable.FromTraversable

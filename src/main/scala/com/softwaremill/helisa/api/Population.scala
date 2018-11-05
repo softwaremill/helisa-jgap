@@ -1,7 +1,9 @@
-package com.softwaremill.helisa
+package com.softwaremill.helisa.api
 
+import com.softwaremill.helisa._
 import org.jgap.IChromosome
 import org.{jgap => j}
+
 import scala.collection.JavaConverters._
 
 class Population[G: Genotype: Evolver] private (private[helisa] val configuration: Evolver[G]) {
@@ -34,8 +36,8 @@ class Population[G: Genotype: Evolver] private (private[helisa] val configuratio
       case Right(a)              => a
     }
 
-  def add(newGenoype: G): Population[G] = {
-    jPop.addChromosome(newGenoype.toJ)
+  def add(newGenotype: G): Population[G] = {
+    jPop.addChromosome(newGenotype.toJ)
     this
   }
 

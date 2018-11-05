@@ -1,5 +1,6 @@
 package com.softwaremill.helisa
 
+import com.softwaremill.helisa.api.{Genotype, GenotypeValidator}
 import org.{jgap => j}
 
 import scala.collection.JavaConverters._

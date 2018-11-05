@@ -1,8 +1,8 @@
 package com.softwaremill.helisa_demo
 
 import com.softwaremill.helisa._
-import com.softwaremill.helisa.gene.Gene.{IntGene, IntOfMultipleGene}
-import com.softwaremill.helisa.gene.Gene
+import com.softwaremill.helisa.api.Gene.{IntGene, IntOfMultipleGene}
+import com.softwaremill.helisa.api.{Gene, GenotypeValidator, Population}
 
 object Demo extends App {
 
