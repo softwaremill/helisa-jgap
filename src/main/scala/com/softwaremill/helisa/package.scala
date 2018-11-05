@@ -32,7 +32,7 @@ package object helisa {
     def fromJ: Either[String, G] = genotype.fromJ(jChromo)
   }
 
-  implicit def defaultResolver(implicit c: Evolver[_]): JGeneResolver = {
+  implicit def defaultResolver: JGeneResolver = {
     case g: j.impl.BooleanGene        => new BooleanGene(g)
     case g: j.impl.IntegerGene        => new IntGene(g)
     case g: j.impl.MutipleIntegerGene => new IntOfMultipleGene(g)
@@ -43,7 +43,7 @@ package object helisa {
     case u                            => throw new UnsupportedOperationException(s"Unsupported JGAP gene conversion for type: ${u.getClass}")
   }
 
-  implicit def caseClassGenotype[G: Evolver, Repr <: HList](implicit g: Generic.Aux[G, Repr],
+  implicit def caseClassGenotype[G, Repr <: HList](implicit g: Generic.Aux[G, Repr],
                                                             tT: ToTraversable.Aux[Repr, Vector, Gene[_]],
                                                             fT: FromTraversable[Repr]): Genotype[G] = {
     import shapeless.syntax.std.traversable._
