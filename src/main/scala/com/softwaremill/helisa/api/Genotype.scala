@@ -3,9 +3,7 @@ import org.{jgap => j}
 
 import scala.annotation.implicitNotFound
 
-/**
- * TODO
- */// stripMargin cannot be used because annotation processor expects string constants (and ignores the directive otherwise)
+// stripMargin cannot be used because annotation processor expects string constants (and ignores the directive otherwise)
 // format: off
 @implicitNotFound(msg =
 """Chromosome for ${G} not found.

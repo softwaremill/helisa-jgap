@@ -24,11 +24,11 @@ object Demo extends App {
   evolver.sampleGenotype = CannyGenes(genes.int(0, 255), genes.int(0, 255), genes.intOfMultiple(0, 12, 2))
   evolver.maxPopulationSize = 100
 
-  val genotype = Population.randomGenotype(evolver)
+  val genotypes = Population.randomGenotype(evolver)
 
-  genotype.evolve(1000)
+  genotypes.evolve(1000)
 
-  println(genotype.fittest[CannyParameters])
+  println(genotypes.fittest[CannyParameters])
 
 }
 

@@ -24,14 +24,19 @@ object NaturalSelector {
 
   object selectors {
 
-    def standardPost()(implicit c: Evolver[_]) = new j.impl.StandardPostSelector(c.jConfig)
+    object pre {
+      def threshold(rate: Double)(implicit c: Evolver[_]) = new j.impl.ThresholdSelector(c.jConfig, rate)
 
-    def threshold(rate: Double)(implicit c: Evolver[_]) = new j.impl.ThresholdSelector(c.jConfig, rate)
+      def tournament(tournamentSize: Int, bestSelectionProbability: Double)(implicit c: Evolver[_]) =
+        new j.impl.TournamentSelector(c.jConfig, tournamentSize, bestSelectionProbability)
 
-    def tournament(tournamentSize: Int, bestSelectionProbability: Double)(implicit c: Evolver[_]) =
-      new j.impl.TournamentSelector(c.jConfig, tournamentSize, bestSelectionProbability)
+      def weightedRoulette()(implicit c: Evolver[_]) = new j.impl.WeightedRouletteSelector(c.jConfig)
+    }
 
-    def weightedRoulette()(implicit c: Evolver[_]) = new j.impl.WeightedRouletteSelector(c.jConfig)
+    object post {
+      def standardPost()(implicit c: Evolver[_]) = new j.impl.StandardPostSelector(c.jConfig)
+    }
+
   }
 
 }

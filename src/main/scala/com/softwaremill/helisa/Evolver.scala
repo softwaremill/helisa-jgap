@@ -8,7 +8,11 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
 class Evolver[G: Genotype] private (fitnessFunction: G => Double) {
 
-  private[helisa] val jConfig: j.Configuration = new j.impl.DefaultConfiguration
+  private[helisa] val jConfig: j.Configuration = {
+    val c = new j.impl.DefaultConfiguration()
+    j.Configuration.reset() //TODO: is this actually thread-safe for multiple runs?
+    c
+  }
 
   private val rawFitnessFunctions: j.IChromosome => Double = (jChromo: j.IChromosome) =>
     jChromo.fromJ.map(fitnessFunction).getOrElse(0)
@@ -89,7 +93,7 @@ abstract class ConfigurationParameters[Param] private[helisa] () {
 private class NaturalSelectorConfigurationParameters(jConfig: j.Configuration, isPre: Boolean)
     extends ConfigurationParameters[j.NaturalSelector] {
   def get(): Seq[j.NaturalSelector] =
-    jConfig.getNaturalSelectors(isPre).iterator().asInstanceOf[java.util.Iterator[j.NaturalSelector]].asScala.toSeq
+    jConfig.getNaturalSelectors(isPre).iterator().asInstanceOf[java.util.Iterator[j.NaturalSelector]].asScala.toList
 
   def add(newValue: j.NaturalSelector): Unit = jConfig.addNaturalSelector(newValue, isPre)
 

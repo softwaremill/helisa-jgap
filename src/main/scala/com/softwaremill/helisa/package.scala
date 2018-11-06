@@ -13,7 +13,7 @@ package object helisa {
 
   val geneticOperators = GeneticOperator
 
-  val naturalSelectors = NaturalSelector.selectors
+  val selectors = NaturalSelector.selectors
 
   implicit class GenotypeOps[G](a: G)(implicit genotype: Genotype[G]) {
 
