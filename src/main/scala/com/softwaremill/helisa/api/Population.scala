@@ -5,8 +5,8 @@ import org.jgap.IChromosome
 import org.{jgap => j}
 
 import scala.collection.JavaConverters._
-//TODO: merge phenotype parameter
-class Population[G: Genotype: EvolverConfig] private[helisa] (private[helisa] val jGenotype: j.Genotype) { //TODO: add AnyVal?
+
+class Population[G: Genotype: EvolverConfig] private[helisa] (private[helisa] val jGenotype: j.Genotype) {
 
   private[helisa] def jPop = jGenotype.getPopulation
 
