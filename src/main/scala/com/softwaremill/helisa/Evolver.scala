@@ -22,7 +22,9 @@ class Evolver[G: Genotype: EvolverConfig] private[helisa] (private val jGenotype
 
   private[helisa] def population: Population[G] = new Population[G](jGenotype)
 
-  def streamScalaStdLib(): Stream[Population[G]] = Stream.iterate(this)(_.evolve(1)).map(_.population)
+  def iterator(): Iterator[Population[G]] = Iterator.iterate(this)(_.evolve(1)).map(_.population)
+
+  def streamScalaStdLib(): Stream[Population[G]] = iterator().toStream
 
   def source(): Source[Population[G], NotUsed] =
     Source.unfold(this)(eH => (eH.evolve(1) -> eH.population).some)

@@ -23,7 +23,13 @@ class EvolutionApiSpec extends FlatSpec with MustMatchers with Inside with Gener
     Evolver[TestGenotype](fitnessFunction, implicit c => TestGenotype(genes.int(0, 100)), 1000)
   }
 
-  "The Evolver" must "produce a valid standard Scala stream" in {
+  "The Evolver" must "produce a valid standard Scala iterator" in {
+    val finalPop = tested.iterator().drop(100).next()
+
+    finalPop.fittestValue must be(TargetValue)
+  }
+
+  it must "produce a valid standard Scala stream" in {
     val finalPop = tested.streamScalaStdLib().drop(100).head
 
     finalPop.fittestValue must be(TargetValue)
