@@ -135,13 +135,22 @@ class EvolverConfigSpec extends FlatSpec with BeforeAndAfter with MustMatchers w
     }
   }
 
-  it must "remove genetic operators" in {
+  it must "remove selectors" in {
     val selector = selectors.pre.weightedRoulette()
 
     tested.naturalSelectorsPostGeneticOperators.add(selector)
-    tested.naturalSelectorsPostGeneticOperators.remove(selector)
+    tested.naturalSelectorsPostGeneticOperators.clear()
 
     tested.naturalSelectorsPostGeneticOperators.get() mustNot contain(selector)
+  }
+
+  it must "remove genetic operators" in {
+    val operator = geneticOperators.mutation.inverting()
+
+    tested.geneticOperators.add(operator)
+    tested.geneticOperators.remove(operator)
+
+    tested.geneticOperators.get() mustNot contain(operator)
   }
 
 }

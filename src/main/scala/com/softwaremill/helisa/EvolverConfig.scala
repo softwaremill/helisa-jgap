@@ -47,28 +47,29 @@ class EvolverConfig[G: Genotype] private (fitnessFunction: G => Double) {
   def validator_=(v: GenotypeValidator[G]): Unit =
     validatorActual = Some(v)
 
-  lazy val naturalSelectorsPreGeneticOperators: ConfigurationParameters[j.NaturalSelector] =
+  lazy val naturalSelectorsPreGeneticOperators: ConfigurationParameters[j.NaturalSelector] with ParametersBulkRemove =
     new NaturalSelectorConfigurationParameters(jConfig, isPre = true)
 
-  lazy val naturalSelectorsPostGeneticOperators: ConfigurationParameters[j.NaturalSelector] =
+  lazy val naturalSelectorsPostGeneticOperators: ConfigurationParameters[j.NaturalSelector] with ParametersBulkRemove =
     new NaturalSelectorConfigurationParameters(jConfig, isPre = false)
 
-  lazy val geneticOperators: ConfigurationParameters[j.GeneticOperator] = new ConfigurationParameters[j.GeneticOperator] {
-    def add(newValue: j.GeneticOperator): Unit = jConfig.addGeneticOperator(newValue)
+  lazy val geneticOperators: ConfigurationParameters[j.GeneticOperator] with ParametersSelectiveRemove[j.GeneticOperator] =
+    new ConfigurationParameters[j.GeneticOperator] with ParametersSelectiveRemove[j.GeneticOperator] {
+      def add(newValue: j.GeneticOperator): Unit = jConfig.addGeneticOperator(newValue)
 
-    def remove(toRemove: j.GeneticOperator): Unit = {
-      if (jConfig.isLocked) {
-        throw new UnsupportedOperationException(
-          "Cannot remove operator out of a configuration in use, please create a new Configuration!")
+      def remove(toRemove: j.GeneticOperator): Unit = {
+        if (jConfig.isLocked) {
+          throw new UnsupportedOperationException(
+            "Cannot remove operator out of a configuration in use, please create a new Configuration!")
+        }
+        jConfig.getGeneticOperators.remove(toRemove)
       }
-      jConfig.getGeneticOperators.remove(toRemove)
+
+      def get(): Seq[j.GeneticOperator] =
+        jConfig.getGeneticOperators.asInstanceOf[java.util.List[j.GeneticOperator]].asScala.view.toSeq
+
+      def size: Int = jConfig.getGeneticOperators.size()
     }
-
-    def get(): Seq[j.GeneticOperator] =
-      jConfig.getGeneticOperators.asInstanceOf[java.util.List[j.GeneticOperator]].asScala.view.toSeq
-
-    def size: Int = jConfig.getGeneticOperators.size()
-  }
 
   def build(): Evolver[G] = Evolver.randomGenotype(this, implicitly[Genotype[G]])
 
@@ -86,22 +87,32 @@ abstract class ConfigurationParameters[Param] private[helisa] () {
 
   def add(newValue: Param): Unit
 
+  def size: Int
+}
+
+sealed trait ParametersBulkRemove {
+  this: ConfigurationParameters[_] =>
+
+  def clear(): Unit
+}
+
+sealed trait ParametersSelectiveRemove[Param] extends ParametersBulkRemove {
+  this: ConfigurationParameters[Param] =>
+
   def remove(toRemove: Param): Unit
 
-  def size: Int
-
-  private[helisa] def clear(): Unit = get().foreach(remove)
-
+  def clear(): Unit = get().foreach(remove)
 }
 
 private class NaturalSelectorConfigurationParameters(jConfig: j.Configuration, isPre: Boolean)
-    extends ConfigurationParameters[j.NaturalSelector] {
+    extends ConfigurationParameters[j.NaturalSelector]
+    with ParametersBulkRemove {
   def get(): Seq[j.NaturalSelector] =
     jConfig.getNaturalSelectors(isPre).iterator().asInstanceOf[java.util.Iterator[j.NaturalSelector]].asScala.toList
 
   def add(newValue: j.NaturalSelector): Unit = jConfig.addNaturalSelector(newValue, isPre)
 
-  def remove(toRemove: j.NaturalSelector): Unit = jConfig.removeNaturalSelectors(isPre)
+  def clear(): Unit = jConfig.removeNaturalSelectors(isPre)
 
   def size: Int = jConfig.getNaturalSelectorsSize(isPre)
 }
