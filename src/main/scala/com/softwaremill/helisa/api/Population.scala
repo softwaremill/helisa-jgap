@@ -5,16 +5,10 @@ import org.jgap.IChromosome
 import org.{jgap => j}
 
 import scala.collection.JavaConverters._
+//TODO: merge phenotype parameter
+class Population[G: Genotype: EvolverConfig] private[helisa] (private[helisa] val jGenotype: j.Genotype) { //TODO: add AnyVal?
 
-class Population[G: Genotype: Evolver] private (private[helisa] val configuration: Evolver[G]) {
-
-  private[helisa] val jGenotype = j.Genotype.randomInitialGenotype(configuration.jConfig)
-  private[helisa] def jPop      = jGenotype.getPopulation
-
-  def evolve(numberOfEvolutions: Int = 1): Population[G] = {
-    jGenotype.evolve(numberOfEvolutions)
-    this
-  }
+  private[helisa] def jPop = jGenotype.getPopulation
 
   def fittest[A: Phenotype[G, ?]]: Option[A] = fittestGenotype.map(_.toPhenotype)
 
@@ -57,11 +51,5 @@ class Population[G: Genotype: Evolver] private (private[helisa] val configuratio
     jGenotype.applyGeneticOperators()
     this
   }
-
-}
-
-object Population {
-
-  def randomGenotype[G: Genotype: Evolver](configuration: Evolver[G]): Population[G] = new Population[G](configuration)
 
 }

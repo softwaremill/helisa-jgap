@@ -19,7 +19,7 @@ package object helisa {
 
     def genes: Vector[Gene[_]] = genotype.genes(a)
 
-    def toJ(implicit config: Evolver[G]): j.IChromosome = {
+    def toJ(implicit config: EvolverConfig[G]): j.IChromosome = {
       val genes: Seq[j.Gene] = a.genes.map(_.jGene)
       val jChromosome        = new j.Chromosome(config.jConfig, genes.toArray)
       config.validator.map(_.toJ).foreach(jChromosome.setConstraintChecker)
@@ -44,8 +44,8 @@ package object helisa {
   }
 
   implicit def caseClassGenotype[G, Repr <: HList](implicit g: Generic.Aux[G, Repr],
-                                                            tT: ToTraversable.Aux[Repr, Vector, Gene[_]],
-                                                            fT: FromTraversable[Repr]): Genotype[G] = {
+                                                   tT: ToTraversable.Aux[Repr, Vector, Gene[_]],
+                                                   fT: FromTraversable[Repr]): Genotype[G] = {
     import shapeless.syntax.std.traversable._
 
     new Genotype[G] {

@@ -7,14 +7,14 @@ import org.scalatest.prop.{TableDrivenPropertyChecks, TableFor1}
 import org.scalatest.{BeforeAndAfter, FlatSpec, Inside, MustMatchers}
 import org.scalatest.OptionValues._
 
-class EvolverSpec extends FlatSpec with BeforeAndAfter with MustMatchers with Inside with TableDrivenPropertyChecks {
+class EvolverConfigSpec extends FlatSpec with BeforeAndAfter with MustMatchers with Inside with TableDrivenPropertyChecks {
 
   case class BlahGenotype(a: IntGene)
 
-  implicit var tested: Evolver[BlahGenotype] = _
+  implicit var tested: EvolverConfig[BlahGenotype] = _
 
   before {
-    tested = Evolver[BlahGenotype](_ => 1.0)
+    tested = EvolverConfig[BlahGenotype](_ => 1.0)
   }
 
   "The evolver" must "set the fitness function" in {

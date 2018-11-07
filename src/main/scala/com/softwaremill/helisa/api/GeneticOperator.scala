@@ -4,7 +4,7 @@ import com.softwaremill.helisa._
 import org.jgap.impl._
 import org.{jgap => j}
 
-abstract class GeneticOperator[A: Genotype: Evolver] extends j.GeneticOperator {
+abstract class GeneticOperator[A: Genotype: EvolverConfig] extends j.GeneticOperator {
 
   def apply(chromos: Seq[A]): Seq[A]
 
@@ -18,31 +18,31 @@ object GeneticOperator {
       def rateAsInt: Int = (1 / rate).toInt
     }
 
-    def default(rate: Double)(implicit c: Evolver[_]) = new MutationOperator(c.jConfig, rate.rateAsInt)
+    def default(rate: Double)(implicit c: EvolverConfig[_]) = new MutationOperator(c.jConfig, rate.rateAsInt)
 
-    def gaussian(rate: Double = 0.05d)(implicit c: Evolver[_]) = new GaussianMutationOperator(c.jConfig, rate)
+    def gaussian(rate: Double = 0.05d)(implicit c: EvolverConfig[_]) = new GaussianMutationOperator(c.jConfig, rate)
 
-    def inverting()(implicit c: Evolver[_]) = new InversionOperator(c.jConfig)
+    def inverting()(implicit c: EvolverConfig[_]) = new InversionOperator(c.jConfig)
 
-    def swapping(rate: Double)(implicit c: Evolver[_]) = new SwappingMutationOperator(c.jConfig, rate.rateAsInt)
+    def swapping(rate: Double)(implicit c: EvolverConfig[_]) = new SwappingMutationOperator(c.jConfig, rate.rateAsInt)
 
-    def swapping(rate: Double, range: Int)(implicit c: Evolver[_]) =
+    def swapping(rate: Double, range: Int)(implicit c: EvolverConfig[_]) =
       new RangedSwappingMutationOperator(c.jConfig, rate.rateAsInt, range)
 
-    def twoWay(rate: Double)(implicit c: Evolver[_]) = new TwoWayMutationOperator(c.jConfig, rate.rateAsInt)
+    def twoWay(rate: Double)(implicit c: EvolverConfig[_]) = new TwoWayMutationOperator(c.jConfig, rate.rateAsInt)
   }
 
   object crossover {
 
-    def standard(rate: Double, allowNew: Boolean = false)(implicit c: Evolver[_]) =
+    def standard(rate: Double, allowNew: Boolean = false)(implicit c: EvolverConfig[_]) =
       new CrossoverOperator(c.jConfig, rate, false, allowNew)
 
-    def full(rate: Double, allowNew: Boolean = false)(implicit c: Evolver[_]) =
+    def full(rate: Double, allowNew: Boolean = false)(implicit c: EvolverConfig[_]) =
       new CrossoverOperator(c.jConfig, rate, true, allowNew)
 
-    def averaging()(implicit c: Evolver[_]) = new AveragingCrossoverOperator(c.jConfig)
+    def averaging()(implicit c: EvolverConfig[_]) = new AveragingCrossoverOperator(c.jConfig)
 
-    def greedy()(implicit c: Evolver[_]) = new GreedyCrossover(c.jConfig)
+    def greedy()(implicit c: EvolverConfig[_]) = new GreedyCrossover(c.jConfig)
 
   }
 

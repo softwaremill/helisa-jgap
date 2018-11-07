@@ -9,9 +9,9 @@ object Demo extends App {
   val fitnessFunction = (cannyParams: CannyGenes) =>
     ((cannyParams.low.value + cannyParams.high.value + cannyParams.blur.value) % 8.0) + 1.0
 
-  implicit val evolver: Evolver[CannyGenes] = Evolver(fitnessFunction)
+  implicit val evolverConfig: EvolverConfig[CannyGenes] = EvolverConfig(fitnessFunction)
 
-  evolver.validator = GenotypeValidator((gene: Gene[_], genotype: CannyGenes, index: Int) => {
+  evolverConfig.validator = GenotypeValidator((gene: Gene[_], genotype: CannyGenes, index: Int) => {
     val value = gene.value.asInstanceOf[Int]
     if (index == 2) {
       true
@@ -21,14 +21,14 @@ object Demo extends App {
     }
   })
 
-  evolver.sampleGenotype = CannyGenes(genes.int(0, 255), genes.int(0, 255), genes.intOfMultiple(0, 12, 2))
-  evolver.maxPopulationSize = 100
+  evolverConfig.sampleGenotype = CannyGenes(genes.int(0, 255), genes.int(0, 255), genes.intOfMultiple(0, 12, 2))
+  evolverConfig.maxPopulationSize = 100
 
-  val genotypes = Population.randomGenotype(evolver)
+  val evolver = evolverConfig.build()
 
-  genotypes.evolve(1000)
+  val pop = evolver.streamScalaStdLib().take(1000).head
 
-  println(genotypes.fittest[CannyParameters])
+  println(pop.fittest[CannyParameters])
 
 }
 

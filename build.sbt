@@ -27,8 +27,12 @@ val jgapDeps = Seq(
 val coreDeps = Seq("com.chuusai" %% "shapeless" % "2.3.2") ++
   Seq("cats-core", "alleycats-core").map("org.typelevel" %% _ % "1.1.0")
 
+lazy val akkaVersion = "2.5.17"
+val apiDeps = Seq("com.typesafe.akka" %% "akka-stream" % akkaVersion,
+  "co.fs2" %% "fs2-core" % "1.0.0").map(_ % Optional)
+
 val testDeps = Seq("org.scalatest" %% "scalatest" % "3.0.5",
   "org.scalacheck" %% "scalacheck" % "1.14.0",
   "com.github.alexarchambault" %% "scalacheck-shapeless_1.13" % "1.1.6").map(_ % "test")
 
-libraryDependencies ++= jgapDeps ++ coreDeps ++ testDeps
+libraryDependencies ++= jgapDeps ++ coreDeps ++ apiDeps ++ testDeps

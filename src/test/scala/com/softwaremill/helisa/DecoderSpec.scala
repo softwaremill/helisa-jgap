@@ -1,7 +1,7 @@
-package com.softwaremill.helisa.api
+package com.softwaremill.helisa
 
-import com.softwaremill.helisa._
 import com.softwaremill.helisa.api.Gene.{DoubleGene, IntGene}
+import com.softwaremill.helisa.api.{Genotype, Population}
 import org.scalacheck.Gen
 import org.scalacheck.ScalacheckShapeless._
 import org.scalatest.OptionValues._
@@ -17,7 +17,6 @@ class DecoderSpec extends FlatSpec with MustMatchers with Inside with GeneratorD
     val g = generatorFor[SimpleIntGenotype](implicit evolver => SimpleIntGenotype(genes.int(0, 5), genes.int(5, 10)))
 
     forAll(g)(population => {
-      population.evolve(1)
       val tested          = population.fittest[SimpleIntParams]
       val fittestGenotype = population.fittestGenotype.value
       inside(tested.value) {
@@ -36,7 +35,6 @@ class DecoderSpec extends FlatSpec with MustMatchers with Inside with GeneratorD
     val g = generatorFor[MixedParamsGenotype](implicit evolver => MixedParamsGenotype(genes.int(0, 5), genes.double(-0.5, 0.5)))
 
     forAll(g)(population => {
-      population.evolve(1)
       val tested          = population.fittest[MixedParams]
       val fittestGenotype = population.fittestGenotype.value
       inside(tested.value) {
@@ -69,12 +67,12 @@ class DecoderSpec extends FlatSpec with MustMatchers with Inside with GeneratorD
     "tested.fittest[SimpleIntParams]" mustNot compile
   }
 
-  private def generatorFor[G: Genotype](sample: Evolver[G] => G) = {
-    implicit val evolver: Evolver[G] = Evolver[G](_ => 1.0)
+  private def generatorFor[G: Genotype](sample: EvolverConfig[G] => G) = {
+    implicit val evolver: EvolverConfig[G] = EvolverConfig[G](_ => 1.0)
 
     evolver.sampleGenotype = sample(evolver)
     evolver.maxPopulationSize = 1
 
-    Gen.delay(Population.randomGenotype(evolver))
+    Gen.delay(evolver.build().population)
   }
 }
