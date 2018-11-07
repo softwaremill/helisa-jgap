@@ -76,7 +76,7 @@ class EvolverConfig[G: Genotype] private (fitnessFunction: G => Double) {
 
 object EvolverConfig {
 
-  def apply[A: Genotype](fitnessFunction: A => Double): EvolverConfig[A] = new EvolverConfig[A](fitnessFunction)
+  private[helisa] def apply[G: Genotype](fitnessFunction: G => Double): EvolverConfig[G] = new EvolverConfig[G](fitnessFunction)
 
 }
 
@@ -89,6 +89,8 @@ abstract class ConfigurationParameters[Param] private[helisa] () {
   def remove(toRemove: Param): Unit
 
   def size: Int
+
+  private[helisa] def clear(): Unit = get().foreach(remove)
 
 }
 
