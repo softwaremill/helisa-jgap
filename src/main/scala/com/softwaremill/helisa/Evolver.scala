@@ -55,11 +55,11 @@ object Evolver {
     config.minPopulationSizeRatio = minPopulationSizeRatio
     config.randomGenerator = randomGenerator
 
-    config.naturalSelectorsPreGeneticOperators.clear()
-    selectorsPre(config).foreach(config.naturalSelectorsPreGeneticOperators.add)
+    config.naturalSelectorsPre.clear()
+    selectorsPre(config).foreach(config.naturalSelectorsPre.add)
 
-    config.naturalSelectorsPostGeneticOperators.clear()
-    selectorsPost(config).foreach(config.naturalSelectorsPostGeneticOperators.add)
+    config.naturalSelectorsPost.clear()
+    selectorsPost(config).foreach(config.naturalSelectorsPost.add)
 
     config.geneticOperators.clear()
     operators(config).foreach(config.geneticOperators.add)

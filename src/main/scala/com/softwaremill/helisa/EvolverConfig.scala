@@ -47,10 +47,10 @@ class EvolverConfig[G: Genotype] private (fitnessFunction: G => Double) {
   def validator_=(v: GenotypeValidator[G]): Unit =
     validatorActual = Some(v)
 
-  lazy val naturalSelectorsPreGeneticOperators: ConfigurationParameters[j.NaturalSelector] with ParametersBulkRemove =
+  lazy val naturalSelectorsPre: ConfigurationParameters[j.NaturalSelector] with ParametersBulkRemove =
     new NaturalSelectorConfigurationParameters(jConfig, isPre = true)
 
-  lazy val naturalSelectorsPostGeneticOperators: ConfigurationParameters[j.NaturalSelector] with ParametersBulkRemove =
+  lazy val naturalSelectorsPost: ConfigurationParameters[j.NaturalSelector] with ParametersBulkRemove =
     new NaturalSelectorConfigurationParameters(jConfig, isPre = false)
 
   lazy val geneticOperators: ConfigurationParameters[j.GeneticOperator] with ParametersSelectiveRemove[j.GeneticOperator] =

@@ -119,18 +119,18 @@ class EvolverConfigSpec extends FlatSpec with BeforeAndAfter with MustMatchers w
 
   it must "add natural selectors as pre" in {
     forAll(StandardPreSelectors) { selector =>
-      tested.naturalSelectorsPreGeneticOperators.add(selector)
+      tested.naturalSelectorsPre.add(selector)
 
-      tested.naturalSelectorsPreGeneticOperators.get().lastOption.value must be(selector)
+      tested.naturalSelectorsPre.get().lastOption.value must be(selector)
       tested.jConfig.getNaturalSelectors(true).get(tested.jConfig.getNaturalSelectors(true).size() - 1) must be(selector)
     }
   }
 
   it must "add natural selectors as post" in {
     forAll(StandardPostSelectors) { selector =>
-      tested.naturalSelectorsPostGeneticOperators.add(selector)
+      tested.naturalSelectorsPost.add(selector)
 
-      tested.naturalSelectorsPostGeneticOperators.get().lastOption.value must be(selector)
+      tested.naturalSelectorsPost.get().lastOption.value must be(selector)
       tested.jConfig.getNaturalSelectors(false).get(tested.jConfig.getNaturalSelectors(false).size() - 1) must be(selector)
     }
   }
@@ -138,10 +138,10 @@ class EvolverConfigSpec extends FlatSpec with BeforeAndAfter with MustMatchers w
   it must "remove selectors" in {
     val selector = selectors.pre.weightedRoulette()
 
-    tested.naturalSelectorsPostGeneticOperators.add(selector)
-    tested.naturalSelectorsPostGeneticOperators.clear()
+    tested.naturalSelectorsPost.add(selector)
+    tested.naturalSelectorsPost.clear()
 
-    tested.naturalSelectorsPostGeneticOperators.get() mustNot contain(selector)
+    tested.naturalSelectorsPost.get() mustNot contain(selector)
   }
 
   it must "remove genetic operators" in {
