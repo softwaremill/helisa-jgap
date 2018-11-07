@@ -2,12 +2,13 @@ package com.softwaremill.helisa
 
 import akka.NotUsed
 import com.softwaremill.helisa.api.{Genotype, GenotypeValidator, Population}
-import akka.stream.scaladsl.Source
+import akka.stream.scaladsl.{Keep, Sink, Source}
 import cats.effect.Async
 import cats.syntax.option._
 import fs2.{Stream => Fs2Stream}
 import org.jgap.RandomGenerator
 import org.jgap.impl.StockRandomGenerator
+import org.reactivestreams.Publisher
 import org.{jgap => j}
 
 import scala.language.higherKinds
@@ -30,6 +31,25 @@ class Evolver[G: Genotype: EvolverConfig] private[helisa] (private val jGenotype
 
   def fs2[F[_]: Async](): Fs2Stream[F, Population[G]] =
     Fs2Stream.iterate(this)(_.evolve(1)).map(_.population)
+
+  def publisher(): Publisher[Population[G]] = {
+    import akka.actor.ActorSystem
+    import akka.stream.ActorMaterializer
+    import scala.concurrent.ExecutionContext
+
+    implicit val as: ActorSystem       = ActorSystem(s"helisa_${System.currentTimeMillis()}")
+    implicit val am: ActorMaterializer = ActorMaterializer()
+    implicit val ec: ExecutionContext  = as.dispatcher
+
+    val (watch, publisher) = source().watchTermination()(Keep.right).toMat(Sink.asPublisher(true))(Keep.both).run()
+
+    watch.onComplete { _ =>
+      am.shutdown()
+      as.terminate()
+    }
+
+    publisher
+  }
 
 }
 
