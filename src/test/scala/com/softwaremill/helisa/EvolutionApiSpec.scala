@@ -9,6 +9,7 @@ import org.scalatest.{FlatSpec, Inside, MustMatchers}
 
 import scala.concurrent.{Await, Promise}
 import scala.concurrent.duration._
+import language.postfixOps
 
 class EvolutionApiSpec extends FlatSpec with MustMatchers with Inside with GeneratorDrivenPropertyChecks {
   case class TestGenotype(a: IntGene)
@@ -35,7 +36,7 @@ class EvolutionApiSpec extends FlatSpec with MustMatchers with Inside with Gener
     finalPop.fittestValue must be(TargetValue)
   }
 
-  it must "produce a valid publisher" in {
+  it must "produce a valid Reactive Stream Publisher" in {
     import cats.syntax.option._
 
     val finalPop = Promise[Population[TestGenotype]]()

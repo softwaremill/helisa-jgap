@@ -29,7 +29,7 @@ class Evolver[G: Genotype: EvolverConfig] private[helisa] (private val jGenotype
   def source(): Source[Population[G], NotUsed] =
     Source.unfold(this)(eH => (eH.evolve(1) -> eH.population).some)
 
-  val akkaStreamSource: () => Source[Population[G], NotUsed] = source _
+  val akkaStreamSource: () => Source[Population[G], NotUsed] = source
 
   def fs2[F[_]: Async](): Fs2Stream[F, Population[G]] =
     Fs2Stream.iterate(this)(_.evolve(1)).map(_.population)
