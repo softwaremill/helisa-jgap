@@ -13,28 +13,28 @@ import org.{jgap => j}
 
 import scala.language.higherKinds
 
-class Evolver[G: Genotype: EvolverConfig] private[helisa] (private val jGenotype: j.Genotype) {
+class Evolver[G: Genotype: EvolverConfig, A] private[helisa] (private val jGenotype: j.Genotype) {
 
-  private[helisa] def evolve(numberOfEvolutions: Int = 1): Evolver[G] = {
+  private[helisa] def evolve(numberOfEvolutions: Int = 1): Evolver[G, A] = {
     jGenotype.evolve(numberOfEvolutions)
     this
   }
 
-  private[helisa] def population: Population[G] = new Population[G](jGenotype)
+  private[helisa] def population: Population[G, A] = new Population[G, A](jGenotype)
 
-  def iterator(): Iterator[Population[G]] = Iterator.iterate(this)(_.evolve(1)).map(_.population)
+  def iterator(): Iterator[Population[G, A]] = Iterator.iterate(this)(_.evolve(1)).map(_.population)
 
-  def streamScalaStdLib(): Stream[Population[G]] = iterator().toStream
+  def streamScalaStdLib(): Stream[Population[G, A]] = iterator().toStream
 
-  def source(): Source[Population[G], NotUsed] =
+  def source(): Source[Population[G, A], NotUsed] =
     Source.unfold(this)(eH => (eH.evolve(1) -> eH.population).some)
 
-  val akkaStreamSource: () => Source[Population[G], NotUsed] = source _
+  val akkaStreamSource: () => Source[Population[G, A], NotUsed] = source _
 
-  def fs2[F[_]: Async](): Fs2Stream[F, Population[G]] =
+  def fs2[F[_]: Async](): Fs2Stream[F, Population[G, A]] =
     Fs2Stream.iterate(this)(_.evolve(1)).map(_.population)
 
-  def publisher(): Publisher[Population[G]] = {
+  def publisher(): Publisher[Population[G, A]] = {
     import akka.actor.ActorSystem
     import akka.stream.ActorMaterializer
     import scala.concurrent.ExecutionContext
@@ -57,17 +57,17 @@ class Evolver[G: Genotype: EvolverConfig] private[helisa] (private val jGenotype
 
 object Evolver {
 
-  def apply[G: Genotype](fitnessFunction: G => Double,
-                         sampleGenotype: EvolverConfig[G] => G,
-                         maxPopulationSize: Int,
-                         validator: Option[GenotypeValidator[G]] = None,
-                         minPopulationSizeRatio: Double = 0.0,
-                         randomGenerator: RandomGenerator = new StockRandomGenerator,
-                         selectorsPre: EvolverConfig[G] => List[j.NaturalSelector] = (_: EvolverConfig[G]) => List.empty,
-                         selectorsPost: EvolverConfig[G] => List[j.NaturalSelector] = (c: EvolverConfig[G]) =>
-                           List(selectors.post.best()(c)),
-                         operators: EvolverConfig[G] => List[j.GeneticOperator] = (c: EvolverConfig[G]) =>
-                           List(geneticOperators.crossover.standard()(c), geneticOperators.mutation.default()(c))): Evolver[G] = {
+  def apply[G: Genotype, A](
+      fitnessFunction: G => Double,
+      sampleGenotype: EvolverConfig[G] => G,
+      maxPopulationSize: Int,
+      validator: Option[GenotypeValidator[G]] = None,
+      minPopulationSizeRatio: Double = 0.0,
+      randomGenerator: RandomGenerator = new StockRandomGenerator,
+      selectorsPre: EvolverConfig[G] => List[j.NaturalSelector] = (_: EvolverConfig[G]) => List.empty,
+      selectorsPost: EvolverConfig[G] => List[j.NaturalSelector] = (c: EvolverConfig[G]) => List(selectors.post.best()(c)),
+      operators: EvolverConfig[G] => List[j.GeneticOperator] = (c: EvolverConfig[G]) =>
+        List(geneticOperators.crossover.standard()(c), geneticOperators.mutation.default()(c))): Evolver[G, A] = {
     implicit val config: EvolverConfig[G] = EvolverConfig(fitnessFunction)
 
     config.sampleGenotype = sampleGenotype(config)
@@ -86,10 +86,10 @@ object Evolver {
     config.geneticOperators.clear()
     operators(config).foreach(config.geneticOperators.add)
 
-    config.build()
+    config.build[A]()
   }
 
-  private[helisa] def randomGenotype[G](implicit config: EvolverConfig[G], _genotype: Genotype[G]): Evolver[G] =
-    new Evolver[G](j.Genotype.randomInitialGenotype(config.jConfig))
+  private[helisa] def randomGenotype[G, A](implicit config: EvolverConfig[G], _genotype: Genotype[G]): Evolver[G, A] =
+    new Evolver[G, A](j.Genotype.randomInitialGenotype(config.jConfig))
 
 }

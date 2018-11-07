@@ -16,11 +16,11 @@ class EvolutionApiSpec extends FlatSpec with MustMatchers with Inside with Gener
 
   val TargetValue = 42
 
-  def tested: Evolver[TestGenotype] = {
+  def tested: Evolver[TestGenotype, TestPhenotype] = {
 
     val fitnessFunction = (t: TestGenotype) => 100 / (TargetValue.toDouble - t.a.value).abs
 
-    Evolver[TestGenotype](fitnessFunction, implicit c => TestGenotype(genes.int(0, 100)), 1000)
+    Evolver[TestGenotype, TestPhenotype](fitnessFunction, implicit c => TestGenotype(genes.int(0, 100)), 1000)
   }
 
   "The Evolver" must "produce a valid standard Scala iterator" in {
@@ -38,11 +38,11 @@ class EvolutionApiSpec extends FlatSpec with MustMatchers with Inside with Gener
   it must "produce a valid publisher" in {
     import cats.syntax.option._
 
-    val finalPop = Promise[Population[TestGenotype]]()
+    val finalPop = Promise[Population[TestGenotype, TestPhenotype]]()
 
     tested
       .publisher()
-      .subscribe(new Subscriber[Population[TestGenotype]] {
+      .subscribe(new Subscriber[Population[TestGenotype, TestPhenotype]] {
 
         var sub: Option[Subscription] = none
         var counter                   = 1
@@ -51,7 +51,7 @@ class EvolutionApiSpec extends FlatSpec with MustMatchers with Inside with Gener
           sub = s.some
           s.request(100)
         }
-        override def onNext(t: Population[TestGenotype]): Unit =
+        override def onNext(t: Population[TestGenotype, TestPhenotype]): Unit =
           if (counter < 100) {
             counter += 1
           } else {
@@ -86,8 +86,8 @@ class EvolutionApiSpec extends FlatSpec with MustMatchers with Inside with Gener
     finalPop.fittestValue must be(TargetValue)
   }
 
-  implicit class TestPopOps(pop: Population[TestGenotype]) {
+  implicit class TestPopOps(pop: Population[TestGenotype, TestPhenotype]) {
 
-    def fittestValue = pop.fittest[TestPhenotype].value.a
+    def fittestValue = pop.fittest.value.a
   }
 }

@@ -5,14 +5,14 @@ import org.jgap.IChromosome
 import org.{jgap => j}
 
 import scala.collection.JavaConverters._
-//TODO: merge phenotype parameter
-class Population[G: Genotype: EvolverConfig] private[helisa] (private[helisa] val jGenotype: j.Genotype) { //TODO: add AnyVal?
+
+class Population[G: Genotype: EvolverConfig, A] private[helisa] (private[helisa] val jGenotype: j.Genotype) {
 
   private[helisa] def jPop = jGenotype.getPopulation
 
-  def fittest[A: Phenotype[G, ?]]: Option[A] = fittestGenotype.map(_.toPhenotype)
+  def fittest(implicit pheno: Phenotype[G, A]): Option[A] = fittestGenotype.map(_.toPhenotype)
 
-  def fittest[A: Phenotype[G, ?]](num: Int): Seq[A] = fittestGenotypes(num).map(_.toPhenotype)
+  def fittest(num: Int)(implicit pheno: Phenotype[G, A]): Seq[A] = fittestGenotypes(num).map(_.toPhenotype)
 
   def fittestGenotype: Option[G] = Option(jGenotype.getFittestChromosome).flatMap(_.fromJ.toOption)
 
@@ -30,12 +30,12 @@ class Population[G: Genotype: EvolverConfig] private[helisa] (private[helisa] va
       case Right(a)              => a
     }
 
-  def add(newGenotype: G): Population[G] = {
+  def add(newGenotype: G): Population[G, A] = {
     jPop.addChromosome(newGenotype.toJ)
     this
   }
 
-  def add(newGenotype: Seq[G]): Population[G] = {
+  def add(newGenotype: Seq[G]): Population[G, A] = {
     newGenotype.foreach(add)
     this
   }
@@ -47,7 +47,7 @@ class Population[G: Genotype: EvolverConfig] private[helisa] (private[helisa] va
 
   def keepPopSizeConstant(): Unit = jPop.keepPopSizeConstant()
 
-  def applyGeneticOperators(): Population[G] = {
+  def applyGeneticOperators(): Population[G, A] = {
     jGenotype.applyGeneticOperators()
     this
   }

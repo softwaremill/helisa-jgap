@@ -19,14 +19,15 @@ object Demo extends App {
     }
   })
 
-  val evolver = Evolver[CannyGenes](fitnessFunction,
-                                    implicit c => CannyGenes(genes.int(0, 255), genes.int(0, 255), genes.intOfMultiple(0, 12, 2)),
-                                    100,
-                                    validator = Some(validator))
+  val evolver = Evolver[CannyGenes, CannyParameters](
+    fitnessFunction,
+    implicit c => CannyGenes(genes.int(0, 255), genes.int(0, 255), genes.intOfMultiple(0, 12, 2)),
+    100,
+    validator = Some(validator))
 
   val pop = evolver.streamScalaStdLib().take(1000).head
 
-  println(pop.fittest[CannyParameters])
+  println(pop.fittest)
 
 }
 

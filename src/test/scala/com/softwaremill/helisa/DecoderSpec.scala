@@ -14,10 +14,11 @@ class DecoderSpec extends FlatSpec with MustMatchers with Inside with GeneratorD
     case class SimpleIntGenotype(a: IntGene, b: IntGene)
     case class SimpleIntParams(a: Int, b: Int)
 
-    val g = generatorFor[SimpleIntGenotype](implicit evolver => SimpleIntGenotype(genes.int(0, 5), genes.int(5, 10)))
+    val g =
+      generatorFor[SimpleIntGenotype, SimpleIntParams](implicit evolver => SimpleIntGenotype(genes.int(0, 5), genes.int(5, 10)))
 
     forAll(g)(population => {
-      val tested          = population.fittest[SimpleIntParams]
+      val tested          = population.fittest
       val fittestGenotype = population.fittestGenotype.value
       inside(tested.value) {
         case SimpleIntParams(a, b) =>
@@ -32,10 +33,11 @@ class DecoderSpec extends FlatSpec with MustMatchers with Inside with GeneratorD
     case class MixedParamsGenotype(a: IntGene, b: DoubleGene)
     case class MixedParams(a: Int, b: Double)
 
-    val g = generatorFor[MixedParamsGenotype](implicit evolver => MixedParamsGenotype(genes.int(0, 5), genes.double(-0.5, 0.5)))
+    val g = generatorFor[MixedParamsGenotype, MixedParams](implicit evolver =>
+      MixedParamsGenotype(genes.int(0, 5), genes.double(-0.5, 0.5)))
 
     forAll(g)(population => {
-      val tested          = population.fittest[MixedParams]
+      val tested          = population.fittest
       val fittestGenotype = population.fittestGenotype.value
       inside(tested.value) {
         case MixedParams(a, b) =>
@@ -49,30 +51,32 @@ class DecoderSpec extends FlatSpec with MustMatchers with Inside with GeneratorD
     case class SimpleIntGenotype(a: IntGene, b: IntGene)
     case class SimpleIntParams(a: Int)
 
-    val g = generatorFor[SimpleIntGenotype](implicit evolver => SimpleIntGenotype(genes.int(0, 5), genes.int(5, 10)))
+    val g =
+      generatorFor[SimpleIntGenotype, SimpleIntParams](implicit evolver => SimpleIntGenotype(genes.int(0, 5), genes.int(5, 10)))
 
-    val tested: Population[SimpleIntGenotype] = g.sample.value
+    val tested = g.sample.value
 
-    "tested.fittest[SimpleIntParams]" mustNot compile
+    "tested.fittest" mustNot compile
   }
 
   it must "NOT decode case classes from a non-compatible genotype (types)" in {
     case class SimpleIntGenotype(a: IntGene, b: IntGene)
     case class SimpleDoubleParams(a: Double, b: Double)
 
-    val g = generatorFor[SimpleIntGenotype](implicit evolver => SimpleIntGenotype(genes.int(0, 5), genes.int(5, 10)))
+    val g = generatorFor[SimpleIntGenotype, SimpleDoubleParams](implicit evolver =>
+      SimpleIntGenotype(genes.int(0, 5), genes.int(5, 10)))
 
-    val tested: Population[SimpleIntGenotype] = g.sample.value
+    val tested = g.sample.value
 
-    "tested.fittest[SimpleIntParams]" mustNot compile
+    "tested.fittest" mustNot compile
   }
 
-  private def generatorFor[G: Genotype](sample: EvolverConfig[G] => G) = {
+  private def generatorFor[G: Genotype, A](sample: EvolverConfig[G] => G) = {
     implicit val evolver: EvolverConfig[G] = EvolverConfig[G](_ => 1.0)
 
     evolver.sampleGenotype = sample(evolver)
     evolver.maxPopulationSize = 1
 
-    Gen.delay(evolver.build().population)
+    Gen.delay(evolver.build[A]().population)
   }
 }

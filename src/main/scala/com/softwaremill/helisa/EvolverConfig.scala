@@ -71,7 +71,7 @@ class EvolverConfig[G: Genotype] private (fitnessFunction: G => Double) {
       def size: Int = jConfig.getGeneticOperators.size()
     }
 
-  def build(): Evolver[G] = Evolver.randomGenotype(this, implicitly[Genotype[G]])
+  def build[A](): Evolver[G, A] = Evolver.randomGenotype(this, implicitly[Genotype[G]])
 
 }
 
