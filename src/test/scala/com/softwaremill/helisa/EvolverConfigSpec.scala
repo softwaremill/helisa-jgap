@@ -103,7 +103,8 @@ class EvolverConfigSpec extends FlatSpec with BeforeAndAfter with MustMatchers w
     import selectors.post._
     Table(
       "selector",
-      standardPost()
+      standardPost(),
+      best()
     )
   }
 

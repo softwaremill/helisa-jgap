@@ -4,9 +4,9 @@ import com.softwaremill.helisa._
 import org.jgap.impl._
 import org.{jgap => j}
 
-abstract class GeneticOperator[A: Genotype: EvolverConfig] extends j.GeneticOperator {
+abstract class GeneticOperator[G: Genotype: EvolverConfig] extends j.GeneticOperator {
 
-  def apply(chromos: Seq[A]): Seq[A]
+  def apply(chromos: Seq[G]): Seq[G]
 
 }
 
@@ -18,7 +18,7 @@ object GeneticOperator {
       def rateAsInt: Int = (1 / rate).toInt
     }
 
-    def default(rate: Double)(implicit c: EvolverConfig[_]) = new MutationOperator(c.jConfig, rate.rateAsInt)
+    def default(rate: Double = 0.083d)(implicit c: EvolverConfig[_]) = new MutationOperator(c.jConfig, rate.rateAsInt)
 
     def gaussian(rate: Double = 0.05d)(implicit c: EvolverConfig[_]) = new GaussianMutationOperator(c.jConfig, rate)
 
@@ -34,7 +34,7 @@ object GeneticOperator {
 
   object crossover {
 
-    def standard(rate: Double, allowNew: Boolean = false)(implicit c: EvolverConfig[_]) =
+    def standard(rate: Double = 0.35d, allowNew: Boolean = false)(implicit c: EvolverConfig[_]) =
       new CrossoverOperator(c.jConfig, rate, false, allowNew)
 
     def full(rate: Double, allowNew: Boolean = false)(implicit c: EvolverConfig[_]) =

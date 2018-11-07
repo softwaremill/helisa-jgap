@@ -16,11 +16,11 @@ import scala.language.higherKinds
 
 object NaturalSelector {
 
-  def apply[A: Genotype: EvolverConfig](select: (Seq[A], Int) => Seq[A], doublettesAllowed: Boolean) =
+  def apply[G: Genotype: EvolverConfig](select: (Seq[G], Int) => Seq[G], doublettesAllowed: Boolean) =
     if (doublettesAllowed)
-      new NaturalSelector[A, List](select, doublettesAllowed)
+      new NaturalSelector[G, List](select, doublettesAllowed)
     else
-      new NaturalSelector[A, Set](select, doublettesAllowed)
+      new NaturalSelector[G, Set](select, doublettesAllowed)
 
   object selectors {
 
@@ -35,13 +35,16 @@ object NaturalSelector {
 
     object post {
       def standardPost()(implicit c: EvolverConfig[_]) = new j.impl.StandardPostSelector(c.jConfig)
+
+      def best(originalRate: Double = 0.90)(implicit c: EvolverConfig[_]) =
+        new j.impl.BestChromosomesSelector(c.jConfig, originalRate)
     }
 
   }
 
 }
 
-class NaturalSelector[A: Genotype: EvolverConfig, Col[_]: MonoidK: Pure: Traverse] private (doSelect: (Seq[A], Int) => Seq[A],
+class NaturalSelector[G: Genotype: EvolverConfig, Col[_]: MonoidK: Pure: Traverse] private (doSelect: (Seq[G], Int) => Seq[G],
                                                                                             doublettesAllowed: Boolean)
     extends j.NaturalSelector {
 
