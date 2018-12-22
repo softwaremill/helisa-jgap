@@ -2,6 +2,8 @@
 
 _Modern API for JGAP_
 
+image:https://maven-badges.herokuapp.com/maven-central/com.softwaremill/helisa-jgap_2.12/badge.svg["Latest 2.12 version", link="https://maven-badges.herokuapp.com/maven-central/com.softwaremill/helisa-jgap_2.12"]
+
 Helisa (HEL-EE-SAH) is a Scala frontend for solving problems with genetic algorithms and genetic programming.
 
 This is the original version of helisa, backed by the https://sourceforge.net/projects/jgap/[JGAP library for evolutionary algorithms on the JVM]. It eventually got superseded by its https://github.com/softwaremill/helisa[jenetics-backed] version.

@@ -1,7 +1,11 @@
-name := "helisa-jgap"
-version := "0.1"
+import sbt.url
 
-scalaVersion := "2.12.7"
+organization := "com.softwaremill"
+name := "helisa-jgap"
+
+scalaVersion := "2.12.8"
+
+lazy val repoUrl = "https://github.com/softwaremill/helisa-jgap"
 
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6")
 
@@ -36,3 +40,26 @@ val testDeps = Seq("org.scalatest" %% "scalatest" % "3.0.5",
   "com.github.alexarchambault" %% "scalacheck-shapeless_1.13" % "1.1.6").map(_ % "test")
 
 libraryDependencies ++= jgapDeps ++ coreDeps ++ apiDeps ++ testDeps
+
+
+//Sonatype OSS stuff (based on https://github.com/xerial/sbt-sonatype )
+publishTo := Some(
+  if (isSnapshot.value)
+    Opts.resolver.sonatypeSnapshots
+  else
+    Opts.resolver.sonatypeStaging
+)
+
+publishMavenStyle := true
+
+licenses := Seq("LGPL" -> url("https://www.gnu.org/copyleft/lesser.html"))
+homepage := Some(url(repoUrl))
+scmInfo := Some(
+  ScmInfo(
+    url(repoUrl),
+    "scm:git@github.com:softwaremill/helisa-jgap.git"
+  )
+)
+developers := List(
+  Developer(id = "mikolak-net", name = "Mikołaj Koziarkiewicz", email = "", url = url("https://softwaremill.com"))
+)
